@@ -1,0 +1,4389 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EliteFactions — Modern Operator Wiki &amp; Command Reference</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f6f2ea;
+  --surface: #fffaf2;
+  --surface-2: #eee7dc;
+  --text: #171512;
+  --muted: #625d54;
+  --muted-2: #8a8377;
+  --line: #ddd3c4;
+  --accent: #6f5633;
+  --accent-2: #9a7b4f;
+  --accent-soft: rgba(111, 86, 51, 0.09);
+  --success: #3d7a55;
+  --danger: #a5483f;
+  --radius: 18px;
+  --max: 1160px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background:
+    linear-gradient(90deg, rgba(23,21,18,0.035) 1px, transparent 1px),
+    linear-gradient(rgba(23,21,18,0.035) 1px, transparent 1px),
+    var(--bg);
+  background-size: 72px 72px;
+  color: var(--text);
+  line-height: 1.58;
+}
+a { color: inherit; }
+img { max-width: 100%; }
+code, pre, .cmd, .pill, .badge, .nav-label, .brand-subtitle, .tag {
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+body::before { display: none; }
+.progress-bar {
+  position: fixed;
+  inset: 0 auto auto 0;
+  height: 3px;
+  width: 0;
+  z-index: 1200;
+  background: var(--accent);
+}
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23,21,18,0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .24s ease;
+  z-index: 899;
+}
+body.nav-open .mobile-overlay { opacity: 1; pointer-events: auto; }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px clamp(16px, 4vw, 36px);
+  background: rgba(246,242,234,0.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--text);
+  color: var(--surface);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.brand-title { font-size: 0.95rem; font-weight: 750; letter-spacing: -0.02em; }
+.brand-subtitle { color: var(--muted-2); font-size: 0.72rem; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.button, .quick-link, .menu-toggle, .close-nav {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-weight: 700;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+}
+.button:hover, .quick-link:hover, .menu-toggle:hover, .close-nav:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-2);
+  background: rgba(255,250,242,0.72);
+}
+.button.primary, .quick-link.primary {
+  background: var(--text);
+  color: var(--surface);
+  border-color: var(--text);
+}
+.button.primary:hover, .quick-link.primary:hover { background: var(--accent); border-color: var(--accent); }
+.menu-toggle, .close-nav {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+header.hero {
+  position: relative;
+  min-height: calc(100svh - 65px);
+  display: grid;
+  align-items: end;
+  padding: clamp(34px, 7vw, 92px) clamp(16px, 4vw, 36px) clamp(28px, 5vw, 56px);
+  overflow: clip;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(111,86,51,0.08));
+  pointer-events: none;
+}
+.hero::after { display: none; }
+.hero-inner {
+  width: min(var(--max), 100%);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.68fr);
+  gap: clamp(28px, 6vw, 76px);
+  align-items: end;
+}
+.hero-copy { max-width: 780px; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  background: rgba(255,250,242,0.6);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+h1 {
+  font-size: clamp(3.3rem, 10vw, 8.2rem);
+  line-height: .88;
+  letter-spacing: -0.085em;
+  margin: 18px 0 20px;
+  font-weight: 800;
+}
+h1 span { color: var(--accent); }
+.hero-lead {
+  font-size: clamp(1.04rem, 1.7vw, 1.24rem);
+  color: var(--muted);
+  max-width: 58ch;
+  margin: 0 0 24px;
+}
+.header-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.pill {
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: rgba(255,250,242,0.55);
+}
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-meta-panel {
+  border-left: 1px solid var(--line);
+  padding: 4px 0 4px 28px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+.eyebrow { color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.11em; font-size: 0.72rem; margin-bottom: 16px; }
+.meta-list { display: grid; gap: 16px; }
+.meta-row { padding-top: 16px; border-top: 1px solid var(--line); }
+.meta-row:first-child { padding-top: 0; border-top: 0; }
+.meta-row strong { display: block; margin-bottom: 4px; }
+.meta-row span { color: var(--muted); }
+.layout {
+  width: min(var(--max), calc(100% - 32px));
+  margin: 0 auto 56px;
+  display: grid;
+  grid-template-columns: 235px minmax(0,1fr);
+  gap: clamp(20px, 4vw, 48px);
+}
+nav {
+  position: sticky;
+  top: 84px;
+  align-self: start;
+  max-height: calc(100vh - 104px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255,250,242,0.66);
+  backdrop-filter: blur(14px);
+  padding: 14px;
+}
+.nav-head { display: none; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.nav-label {
+  display: block;
+  color: var(--muted-2);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 8px 8px;
+}
+.nav-section + .nav-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  transition: color .18s ease, background .18s ease, transform .18s ease;
+}
+nav a::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--line);
+  flex: 0 0 auto;
+}
+nav a:hover, nav a.active {
+  color: var(--text);
+  background: var(--accent-soft);
+  transform: translateX(2px);
+}
+nav a:hover::before, nav a.active::before { background: var(--accent); }
+main { min-width: 0; }
+section {
+  position: relative;
+  margin-bottom: 24px;
+  padding: clamp(24px, 4vw, 42px) 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  border-radius: 0;
+}
+section.reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+section.reveal.visible { opacity: 1; transform: translateY(0); }
+.accent-section { background: transparent; }
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: clamp(1.75rem, 3.3vw, 3rem);
+  margin: 0 0 16px;
+  letter-spacing: -0.055em;
+  line-height: .98;
+}
+.ico {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--surface);
+  border: 0;
+  font-size: 0.92rem;
+}
+h3 { font-size: 1.02rem; margin: 28px 0 12px; color: var(--text); letter-spacing: -0.02em; }
+p { margin: 0 0 12px; color: var(--muted); }
+strong { color: var(--text); }
+.box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: rgba(255,250,242,0.62);
+}
+.box-info, .box-tip, .box-warn, .box-danger { background: rgba(255,250,242,0.68); }
+.box-tip { border-color: rgba(61,122,85,0.34); }
+.box-warn { border-color: rgba(154,123,79,0.42); }
+.box-danger { border-color: rgba(165,72,63,0.36); }
+code {
+  background: rgba(111,86,51,0.09);
+  border-radius: 8px;
+  padding: 2px 6px;
+  color: var(--accent);
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: var(--text);
+  border: 1px solid var(--text);
+  border-radius: var(--radius);
+  color: var(--surface);
+}
+.table-wrap {
+  overflow: auto;
+  border-top: 1px solid var(--text);
+  border-radius: 0;
+  background: transparent;
+}
+.cmd-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.compact-table .cmd-table { min-width: 0; }
+.cmd-table th, .cmd-table td {
+  padding: 13px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.cmd-table th {
+  color: var(--muted-2);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+.cmd-table tr:last-child td { border-bottom: 1px solid var(--line); }
+.cmd-table tr:hover td { background: rgba(255,250,242,0.58); }
+.cmd { white-space: nowrap; color: var(--accent); font-weight: 650; }
+.desc { color: var(--muted); }
+.tag {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.64rem;
+  color: var(--muted);
+}
+.tag-phase3, .tag-phase2, .tag-phase4, .tag-admin { color: var(--accent); background: var(--accent-soft); border-color: rgba(111,86,51,0.22); }
+.flags-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 16px; }
+.flag-card { display: flex; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; background: rgba(255,250,242,0.56); }
+.flag-dot { width: 9px; height: 9px; border-radius: 50%; }
+.flag-on { background: var(--success); }
+.flag-off { background: var(--line); }
+.flag-name { color: var(--text); }
+.feature-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.feature-list li { padding-left: 16px; position: relative; color: var(--muted); }
+.feature-list li::before { content: '•'; position: absolute; left: 0; color: var(--accent); }
+.split-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
+.price-header, .price-row { display: grid; grid-template-columns: minmax(0,1fr) 86px 86px; gap: 12px; padding: 10px 8px; }
+.price-header { color: var(--muted-2); font-size: 0.72rem; letter-spacing: 0.11em; text-transform: uppercase; border-bottom: 1px solid var(--text); }
+.price-row { border-bottom: 1px solid var(--line); color: var(--muted); }
+.price-row .buy, .price-row .sell { text-align: right; }
+.shop-category { display: inline-flex; margin: 16px 0 10px; padding: 6px 9px; border-radius: 999px; border: 1px solid rgba(111,86,51,0.22); background: var(--accent-soft); color: var(--accent); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; counter-reset: step; border-top: 1px solid var(--text); }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); background: transparent; }
+.steps li::before { content: counter(step); width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: var(--surface); background: var(--text); }
+.cta-band { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 20px; align-items: center; }
+.cta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.scroll-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255,250,242,0.78);
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 1000;
+}
+.scroll-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.hero-animate [data-animate] { opacity: 0; transform: translateY(20px); animation: rise .76s cubic-bezier(.2,.8,.2,1) forwards; }
+.hero-animate [data-animate="2"] { animation-delay: .08s; }
+.hero-animate [data-animate="3"] { animation-delay: .16s; }
+.hero-animate [data-animate="4"] { animation-delay: .24s; }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+.quick-jumps { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+.quick-jump { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:999px; padding:8px 11px; text-decoration:none; color:var(--muted); background:rgba(255,250,242,0.52); font-size:0.8rem; }
+.quick-jump:hover { color:var(--text); border-color:var(--accent-2); background:rgba(255,250,242,0.82); }
+.summary-grid, .meta-grid, .install-grid, .content-grid, .new-feature-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; }
+.summary-card, .meta-card, .install-card, .content-card, .machine-box, .feature-spotlight { border-top:1px solid var(--text); padding:16px 0 0; background:transparent; }
+.summary-card p, .meta-card p, .content-card p, .feature-spotlight p { margin-top: 6px; }
+.section-summary { margin:14px 0 22px; padding:0 0 0 14px; border-left:2px solid var(--accent); background:transparent; color:var(--muted); border-radius:0; }
+.machine-box { margin-top:18px; }
+.copy-btn { margin-left:10px; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:999px; padding:4px 8px; font-size:0.68rem; cursor:pointer; }
+.copy-btn:hover { color:var(--text); border-color:var(--accent-2); }
+.copy-btn.copied { color:var(--surface); background:var(--text); border-color:var(--text); }
+.feature-matrix { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:16px; }
+.feature-flag { border-top:1px solid var(--line); padding:14px 0 0; background:transparent; }
+.feature-flag strong { display:block; margin-bottom:6px; }
+.feature-state { display:inline-flex; padding:4px 8px; border-radius:999px; font-size:0.68rem; border:1px solid var(--line); }
+.feature-state.on { color:var(--success); background:rgba(61,122,85,0.06); border-color:rgba(61,122,85,0.24); }
+.feature-state.off { color:var(--muted); background:transparent; }
+.data-callout { margin-top:10px; color:var(--muted); font-size:0.9rem; }
+.kv { margin:0; }
+.kv dt { color:var(--muted-2); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; }
+.kv dd { margin:0 0 12px; color:var(--text); }
+@media (max-width: 1080px) {
+  header.hero { min-height: auto; padding-top: 36px; }
+  .hero-inner, .layout, .split-grid, .cta-band { grid-template-columns: 1fr; }
+  .hero-meta-panel { border-left: 0; border-top: 1px solid var(--line); padding: 22px 0 0; }
+  nav { position: fixed; left: 0; top: 0; width: min(88vw, 340px); height: 100vh; max-height: none; border-radius: 0 22px 22px 0; transform: translateX(-110%); transition: transform .24s ease; z-index: 900; background: var(--surface); }
+  body.nav-open nav { transform: translateX(0); }
+  .nav-head, .menu-toggle, .close-nav { display: flex; }
+}
+@media (max-width: 760px) {
+  .topbar { padding: 12px 16px; }
+  .quick-link.secondary { display: none; }
+  header.hero { padding-inline: 16px; }
+  .layout { width: min(var(--max), calc(100% - 24px)); }
+  section { padding: 26px 0; }
+  .hero-actions, .cta-actions { flex-direction: column; }
+  .hero-actions .button, .cta-actions .button { width: 100%; justify-content: center; text-align: center; }
+  .header-meta { gap: 8px; }
+  .quick-jumps { display:grid; grid-template-columns:1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .brand-subtitle { display: none; }
+  .steps li { grid-template-columns: 1fr; }
+  .steps li::before { margin-bottom: 2px; }
+  .table-wrap { overflow: visible; background: transparent; border-top: 0; }
+  .cmd-table, .cmd-table thead, .cmd-table tbody, .cmd-table tr, .cmd-table th, .cmd-table td { display: block; width: 100%; }
+  .cmd-table thead { display: none; }
+  .cmd-table { min-width: 0; }
+  .cmd-table tr { border-top: 1px solid var(--text); margin-bottom: 12px; }
+  .cmd-table td { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .cmd-table td::before { content: attr(data-label); display: block; color: var(--muted-2); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+  .cmd { white-space: normal; }
+  .price-header, .price-row { grid-template-columns: 1fr auto auto; gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  section.reveal { opacity: 1; transform: none; }
+}
+</style>
+<meta content="WrmTyfIdY22IywkX2xRhEat_vHk6vV_shoEQ6zSY9LE" name="google-site-verification"/>
+</head>
+<body><div aria-hidden="true" class="progress-bar"></div>
+<div aria-hidden="true" class="mobile-overlay"></div>
+<div class="topbar">
+<div class="brand">
+<div class="brand-mark">E</div>
+<div>
+<div class="brand-title">EliteFaction</div>
+<div class="brand-subtitle">Slash-only Bedrock addon docs</div>
+</div>
+</div>
+<div class="topbar-actions">
+<a class="quick-link secondary" href="#pack">Pack details</a>
+<a class="quick-link primary" href="https://www.curseforge.com/minecraft-bedrock/addons/elitefaction" rel="noopener noreferrer" target="_blank">Download</a>
+<button aria-expanded="false" aria-label="Open navigation" class="menu-toggle" type="button">☰</button>
+</div>
+</div>
+<header class="hero hero-animate">
+<div class="hero-inner">
+<div class="hero-copy">
+<div class="badge" data-animate="1">v1.2.0 · bounties + rewards update</div>
+<h1 data-animate="2">Elite<span>Faction</span></h1>
+<p class="hero-lead" data-animate="3">A clean command wiki for EliteFaction: factions, claims, bounties, daily rewards, language selection, and operator setup in one fast single-page reference.</p>
+<div class="header-meta" data-animate="4">
+<span class="pill">Bedrock 1.26.0+</span>
+<span class="pill">/f: namespace</span>
+<span class="pill">Behavior + Resource Pack</span>
+<span class="pill">16 locales</span>
+</div>
+<div class="hero-actions" data-animate="4">
+<a class="button primary" href="https://www.curseforge.com/minecraft-bedrock/addons/elitefaction" rel="noopener noreferrer" target="_blank">Download on CurseForge</a>
+<a class="button" href="#install">Install guide</a>
+<a class="button" href="#bounties">New features</a>
+</div>
+
+<div aria-label="Quick links" class="quick-jumps">
+<a class="quick-jump" href="#install">Install</a>
+<a class="quick-jump" href="#factions">Commands</a>
+<a class="quick-jump" href="#bounties">Bounties</a>
+<a class="quick-jump" href="#daily">Daily</a>
+<a class="quick-jump" href="#claims">Claims</a>
+<a class="quick-jump" href="#shop">Shop</a>
+<a class="quick-jump" href="#admin">Admin</a>
+<a class="quick-jump" href="#config">Config</a>
+</div>
+</div>
+<aside class="hero-meta-panel" data-animate="4">
+<div class="eyebrow">At a glance</div>
+<div class="meta-list">
+<div class="meta-row"><strong>New systems documented</strong><span>Faction bounties, daily faction rewards, and Help GUI language selection are now first-class wiki sections.</span></div>
+<div class="meta-row"><strong>Minimal interface</strong><span>The page now uses a lighter editorial layout with fewer panels, cleaner tables, and stricter spacing.</span></div>
+<div class="meta-row"><strong>Still operator-ready</strong><span>Copy buttons, responsive tables, active navigation, and the embedded data block remain intact.</span></div>
+</div>
+</aside>
+</div>
+</header>
+<div class="layout">
+<nav id="sideNav">
+<div class="nav-head">
+<strong>Sections</strong>
+<button aria-label="Close navigation" class="close-nav" type="button">✕</button>
+</div>
+<div class="nav-section">
+<span class="nav-label">Getting started</span>
+<a class="active" href="#overview">Overview</a>
+<a href="#pack">Pack &amp; Runtime</a>
+<a href="#install">Installation</a>
+<a href="#features">Feature Flags</a>
+<a href="#content">Custom Content</a>
+</div>
+<div class="nav-section">
+<span class="nav-label">Core systems</span>
+<a href="#factions">Factions</a>
+<a href="#bounties">Faction Bounties</a>
+<a href="#claims">Claims &amp; Land</a>
+<a href="#power">Power &amp; Upgrades</a>
+<a href="#ranks">Ranks</a>
+<a href="#diplomacy">Diplomacy</a>
+<a href="#war">War &amp; Raids</a>
+<a href="#missions">Missions</a>
+</div>
+<div class="nav-section">
+<span class="nav-label">Economy</span>
+<a href="#economy">Currency</a>
+<a href="#daily">Daily Rewards</a>
+<a href="#shop">Shop</a>
+<a href="#auction">Auction House</a>
+<a href="#vault">Faction Vault</a>
+</div>
+<div class="nav-section">
+<span class="nav-label">Utilities</span>
+<a href="#teleport">Teleportation</a>
+<a href="#chat">Chat</a>
+<a href="#moderation">Moderation</a>
+<a href="#admin">Admin</a>
+<a href="#help-language">Help &amp; Language</a>
+<a href="#i18n">Localization</a>
+<a href="#download">Download</a>
+<a href="#config">Config</a>
+</div>
+</nav>
+<main>
+<!-- ── OVERVIEW ── -->
+<!-- ── FACTIONS ── -->
+
+<section aria-labelledby="overview-title" class="reveal accent-section" data-doc-kind="overview" data-doc-section="overview" data-section="overview" id="overview">
+<h2 id="overview-title"><span class="ico">◎</span> Overview</h2>
+<p>EliteFaction is a Bedrock factions add-on that bundles territory control, economy, diplomacy, bounties, rewards, moderation, and operator tooling behind the <code>/f:</code> slash namespace. This wiki is organized for players, operators, and staff who need a clear reference for commands, systems, and deployment.</p>
+<div class="section-summary">This section establishes the document scope: runtime version, command namespace, supported locales, and the current release details documented on this page.</div>
+<div class="summary-grid">
+<div class="summary-card"><strong>Release</strong><p>Behavior pack and resource pack both ship at <code>1.2.0</code> with Bedrock <code>1.26.0+</code> as the minimum engine target.</p></div>
+<div class="summary-card"><strong>Namespace</strong><p>The canonical slash namespace is <code>/f:</code>. This page documents slash commands, GUI entry points, and operator setup.</p></div>
+<div class="summary-card"><strong>New features</strong><p>Faction bounties, daily faction rewards, and Help GUI language selection are now covered in dedicated sections.</p></div>
+</div>
+<div class="new-feature-grid">
+<div class="feature-spotlight"><strong>Faction bounties</strong><p>Factions can fund bounties from their vault. PvP kills claim active bounties automatically.</p></div>
+<div class="feature-spotlight"><strong>Daily rewards</strong><p>Players can claim once per UTC day, with one faction bonus per faction per UTC day.</p></div>
+<div class="feature-spotlight"><strong>Language selection</strong><p>The Help GUI now includes a language selector and quick action for changing locale.</p></div>
+</div>
+<div class="machine-box">
+<strong>structured block</strong>
+<p class="data-callout">This page includes a maintained structured data block in the source so documentation details stay consistent across commands, configuration, and release metadata.</p>
+</div>
+</section>
+<section aria-labelledby="pack-title" class="reveal" data-doc-kind="operator" data-doc-section="pack" data-section="pack" id="pack">
+<h2 id="pack-title"><span class="ico">⌘</span> Pack &amp; Runtime</h2>
+<p>The uploaded package contains a behavior pack, a resource pack, beta script modules, custom items, UI files, and localization bundles. These values are taken from the actual manifests and pack contents.</p>
+<div class="section-summary">Use this section as the runtime source of truth for deployment and compatibility. It summarizes what is physically present in the add-on package, not just what the UI page claims.</div>
+<div class="meta-grid">
+<div class="meta-card"><dl class="kv"><dt>Behavior Pack</dt><dd>EliteFaction BP</dd><dt>Version</dt><dd>1.2.0</dd><dt>Min Engine</dt><dd>1.26.0</dd></dl></div>
+<div class="meta-card"><dl class="kv"><dt>Resource Pack</dt><dd>EliteFaction RP</dd><dt>Version</dt><dd>1.2.0</dd><dt>Runtime Modules</dt><dd>@minecraft/server 2.7.0-beta<br/>@minecraft/server-ui 2.1.0-beta</dd></dl></div>
+<div class="meta-card"><dl class="kv"><dt>Custom Assets</dt><dd>2 custom items, server-form UI files, animated UI elements, hologram/text entity support, and 16 locale bundles.</dd><dt>Entry Script</dt><dd><code>BP/scripts/main.js</code></dd></dl></div>
+</div>
+</section>
+<section aria-labelledby="install-title" class="reveal" data-doc-kind="operator" data-doc-section="install" data-section="install" id="install">
+<h2 id="install-title"><span class="ico">↳</span> Installation</h2>
+<p>Deploy both packs together. The behavior pack depends on the matching resource pack UUID and the script entrypoint defined in the manifest.</p>
+<div class="section-summary">This section translates the package layout into operator steps so the wiki is self-sufficient for setup, not just command lookup.</div>
+<ol class="steps">
+<li><div><strong>Import the add-on</strong><p>Open the <code>.mcaddon</code> package in Minecraft Bedrock so both the behavior pack and resource pack are installed as a matched pair.</p></div></li>
+<li><div><strong>Enable both packs on the world</strong><p>Attach <code>EliteFaction BP</code> and <code>EliteFaction RP</code> to the same world. The behavior pack manifest references the resource pack UUID directly.</p></div></li>
+<li><div><strong>Use the slash namespace</strong><p>Operate the add-on through <code>/f:</code> commands such as <code>/f:help</code>, <code>/f:item</code>, and <code>/f:team create &quot;name&quot;</code>.</p></div></li>
+<li><div><strong>Adjust config before production rollout</strong><p>Tune <code>BP/scripts/config.js</code> for claim costs, RTP bounds, shop items, feature flags, admin tag rules, and rollout gates before using the world in production.</p></div></li>
+</ol>
+</section>
+<section aria-labelledby="features-title" class="reveal" data-doc-kind="operator" data-doc-section="features" data-section="features" id="features">
+<h2 id="features-title"><span class="ico">◌</span> Feature Flags</h2>
+<p>Feature flags in <code>config.js</code> gate staged systems. The core slash build is active, while several advanced systems remain disabled by default.</p>
+<div class="section-summary">Flags are documented explicitly here so operators can quickly see which systems are always available and which remain rollout-gated.</div>
+<div class="feature-matrix">
+<div class="feature-flag" data-feature-flag="foundation" data-feature-state="on"><strong>Foundation</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="phase1_core" data-feature-state="on"><strong>Phase1 Core</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="phase2_missions" data-feature-state="off"><strong>Phase2 Missions</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="phase3_warraid" data-feature-state="off"><strong>Phase3 Warraid</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="phase4_admin" data-feature-state="off"><strong>Phase4 Admin</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="claim_map_v1" data-feature-state="on"><strong>Claim Map</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="faction_warps_v1" data-feature-state="on"><strong>Faction Warps</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="rank_templates_v1" data-feature-state="on"><strong>Rank Templates</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="home_territory_buffs_v1" data-feature-state="on"><strong>Home Territory Buffs</strong><span class="feature-state on">Enabled</span><p>Core or rollout-ready in the shipped config.</p></div><div class="feature-flag" data-feature-flag="claim_matrix_v1" data-feature-state="off"><strong>Claim Matrix</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="raid_breach_rules_v1" data-feature-state="off"><strong>Raid Breach Rules</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="siege_objective_v1" data-feature-state="off"><strong>Siege Objective</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="claim_border_fx_v1" data-feature-state="off"><strong>Claim Border Fx</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="actionbar_toasts_v1" data-feature-state="off"><strong>Actionbar Toasts</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="claim_upkeep_v1" data-feature-state="off"><strong>Claim Upkeep</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="dynamic_buy_pricing_v1" data-feature-state="off"><strong>Dynamic Buy Pricing</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="diplomacy_penalties_v1" data-feature-state="off"><strong>Diplomacy Penalties</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="pvp_antifarm_v1" data-feature-state="off"><strong>Pvp Antifarm</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="combat_tag_v1" data-feature-state="off"><strong>Combat Tag</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="newbie_protection_v1" data-feature-state="off"><strong>Newbie Protection</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="faction_dashboard_v1" data-feature-state="off"><strong>Faction Dashboard</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="role_management_ui_v1" data-feature-state="off"><strong>Role Management Ui</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="faction_audit_v1" data-feature-state="off"><strong>Faction Audit</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="claim_rollback_v1" data-feature-state="off"><strong>Claim Rollback</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div><div class="feature-flag" data-feature-flag="war_spectate_v1" data-feature-state="off"><strong>War Spectate</strong><span class="feature-state off">Disabled</span><p>Present in the shipped config but disabled by default.</p></div>
+</div>
+</section>
+<section aria-labelledby="content-title" class="reveal" data-doc-kind="content" data-doc-section="content" data-section="content" id="content">
+<h2 id="content-title"><span class="ico">◈</span> Custom Content</h2>
+<p>The add-on ships more than commands. The package includes custom items, resource textures, server-form UI assets, and text/hologram rendering support that operators may want to reference when extending the pack.</p>
+<div class="section-summary">This section provides a clear inventory of non-command content so the wiki remains useful for pack exploration, not only slash-command lookups.</div>
+<div class="content-grid">
+<div class="content-card"><strong>Custom items</strong><p><code>elitefaction:menu_tome</code> (EliteFactions Menu) and <code>elitefaction:faction_relic_blade</code> (Faction Relic Blade) are defined in the behavior pack and textured in the resource pack.</p></div>
+<div class="content-card"><strong>UI surfaces</strong><p>The resource pack includes server-form, chest-form, furnace-form, HUD, animated bar, and UI definition files for the operator/player interface layer.</p></div>
+<div class="content-card"><strong>Text rendering</strong><p>Entity, material, render controller, animation, and model assets support text entities and hologram-style presentation workflows.</p></div>
+</div>
+</section>
+<section aria-labelledby="factions-title" class="reveal" data-doc-kind="system" data-doc-section="factions" data-section="factions" id="factions">
+<h2 id="factions-title"><span class="ico">⚑</span> Factions</h2>
+<p>Players create and join factions to collaborate on land claiming, economy, and combat. Names must be 3–20 characters and match <code>[A-Za-z0-9 _-]</code>.</p><div class="section-summary">This section contains 17 structured rows across 3 table groups, with ⚑ Factions as the canonical topic.</div>
+<h3>Creating &amp; Joining</h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-team-create" data-command-system="factions"><td class="cmd">/f:team create &quot;name&quot;<button aria-label="Copy /f:team create &quot;name&quot;" class="copy-btn" data-copy-value="/f:team create &quot;name&quot;" type="button">Copy</button></td><td class="desc">Create a new faction. You become the leader.</td></tr>
+<tr data-command-id="f-team-join" data-command-system="factions"><td class="cmd">/f:team join &quot;name&quot;<button aria-label="Copy /f:team join &quot;name&quot;" class="copy-btn" data-copy-value="/f:team join &quot;name&quot;" type="button">Copy</button></td><td class="desc">Request to join an existing faction.</td></tr>
+<tr data-command-id="f-team-accept" data-command-system="factions"><td class="cmd">/f:team accept &lt;player&gt;<button aria-label="Copy /f:team accept &lt;player&gt;" class="copy-btn" data-copy-value="/f:team accept &lt;player&gt;" type="button">Copy</button></td><td class="desc">Accept a pending join request (leader/captain).</td></tr>
+<tr data-command-id="f-team-leave" data-command-system="factions"><td class="cmd">/f:team leave<button aria-label="Copy /f:team leave" class="copy-btn" data-copy-value="/f:team leave" type="button">Copy</button></td><td class="desc">Leave your current faction.</td></tr>
+<tr data-command-id="f-team-info-faction" data-command-system="factions"><td class="cmd">/f:team info [&quot;faction&quot;]<button aria-label="Copy /f:team info [&quot;faction&quot;]" class="copy-btn" data-copy-value="/f:team info [&quot;faction&quot;]" type="button">Copy</button></td><td class="desc">Show faction details. Defaults to your own.</td></tr>
+<tr data-command-id="f-team-list" data-command-system="factions"><td class="cmd">/f:team list<button aria-label="Copy /f:team list" class="copy-btn" data-copy-value="/f:team list" type="button">Copy</button></td><td class="desc">List all factions.</td></tr>
+</tbody>
+</table></div>
+<h3>Faction Management</h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-info-faction" data-command-system="factions"><td class="cmd">/f:info [&quot;faction&quot;]<button aria-label="Copy /f:info [&quot;faction&quot;]" class="copy-btn" data-copy-value="/f:info [&quot;faction&quot;]" type="button">Copy</button></td><td class="desc">Detailed faction info panel.</td></tr>
+<tr data-command-id="f-set" data-command-system="factions"><td class="cmd">/f:set &lt;field&gt; &lt;value&gt;<button aria-label="Copy /f:set &lt;field&gt; &lt;value&gt;" class="copy-btn" data-copy-value="/f:set &lt;field&gt; &lt;value&gt;" type="button">Copy</button></td><td class="desc">Set a faction field (tag, color, prefix, banner, trail).</td></tr>
+<tr data-command-id="f-customize" data-command-system="factions"><td class="cmd">/f:customize<button aria-label="Copy /f:customize" class="copy-btn" data-copy-value="/f:customize" type="button">Copy</button></td><td class="desc">Open the cosmetics GUI.</td></tr>
+<tr data-command-id="f-top" data-command-system="factions"><td class="cmd">/f:top<button aria-label="Copy /f:top" class="copy-btn" data-copy-value="/f:top" type="button">Copy</button></td><td class="desc">Faction leaderboard.</td></tr>
+<tr data-command-id="f-item" data-command-system="factions"><td class="cmd">/f:item<button aria-label="Copy /f:item" class="copy-btn" data-copy-value="/f:item" type="button">Copy</button></td><td class="desc">Receive the faction menu item (opens full GUI).</td></tr>
+<tr data-command-id="f-help" data-command-system="factions"><td class="cmd">/f:help<button aria-label="Copy /f:help" class="copy-btn" data-copy-value="/f:help" type="button">Copy</button></td><td class="desc">In-game help browser.</td></tr>
+<tr data-command-id="f-map-radius" data-command-system="factions"><td class="cmd">/f:map [radius]<button aria-label="Copy /f:map [radius]" class="copy-btn" data-copy-value="/f:map [radius]" type="button">Copy</button></td><td class="desc">ASCII claim map centered on your position.</td></tr>
+</tbody>
+</table></div>
+<h3>Warps</h3>
+<p>Faction warps let members fast-travel to preset locations. <code>home</code> is a reserved warp name.</p>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-setwarp" data-command-system="factions"><td class="cmd">/f:setwarp &quot;name&quot;<button aria-label="Copy /f:setwarp &quot;name&quot;" class="copy-btn" data-copy-value="/f:setwarp &quot;name&quot;" type="button">Copy</button></td><td class="desc">Set a named faction warp at your position.</td></tr>
+<tr data-command-id="f-warp" data-command-system="factions"><td class="cmd">/f:warp &quot;name&quot;<button aria-label="Copy /f:warp &quot;name&quot;" class="copy-btn" data-copy-value="/f:warp &quot;name&quot;" type="button">Copy</button></td><td class="desc">Teleport to a faction warp.</td></tr>
+<tr data-command-id="f-delwarp" data-command-system="factions"><td class="cmd">/f:delwarp &quot;name&quot;<button aria-label="Copy /f:delwarp &quot;name&quot;" class="copy-btn" data-copy-value="/f:delwarp &quot;name&quot;" type="button">Copy</button></td><td class="desc">Delete a faction warp.</td></tr>
+<tr data-command-id="f-warps" data-command-system="factions"><td class="cmd">/f:warps<button aria-label="Copy /f:warps" class="copy-btn" data-copy-value="/f:warps" type="button">Copy</button></td><td class="desc">List all faction warps.</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section aria-labelledby="bounties-title" class="reveal" data-doc-kind="system" data-doc-section="bounties" data-section="bounties" id="bounties">
+<h2 id="bounties-title"><span class="ico">◇</span> Faction Bounties</h2>
+<p>Faction bounties let members spend faction-vault money to place a reward on a target player. When that target dies in PvP, the bounty is claimed automatically.</p>
+<div class="section-summary">Bounties are funded from the faction vault. The killer receives most of the payout, and a configured share is deposited into the killer's faction vault.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-bounty-list" data-command-system="bounties"><td class="cmd">/f:bounty list<button aria-label="Copy /f:bounty list" class="copy-btn" data-copy-value="/f:bounty list" type="button">Copy</button></td><td class="desc">Show active faction bounties.</td></tr>
+<tr data-command-id="f-bounty-add" data-command-system="bounties"><td class="cmd">/f:bounty add &lt;player&gt; &lt;amount&gt;<button aria-label="Copy /f:bounty add &lt;player&gt; &lt;amount&gt;" class="copy-btn" data-copy-value="/f:bounty add &lt;player&gt; &lt;amount&gt;" type="button">Copy</button></td><td class="desc">Place a bounty on a player using money from your faction vault.</td></tr>
+<tr data-command-id="f-bounty-info" data-command-system="bounties"><td class="cmd">/f:bounty info &lt;player&gt;<button aria-label="Copy /f:bounty info &lt;player&gt;" class="copy-btn" data-copy-value="/f:bounty info &lt;player&gt;" type="button">Copy</button></td><td class="desc">Check bounty details for a specific player.</td></tr>
+<tr data-command-id="f-bounty-remove" data-command-system="bounties"><td class="cmd">/f:bounty remove &lt;player&gt;<button aria-label="Copy /f:bounty remove &lt;player&gt;" class="copy-btn" data-copy-value="/f:bounty remove &lt;player&gt;" type="button">Copy</button></td><td class="desc">Remove an active bounty when your faction is allowed to manage it.</td></tr>
+</tbody>
+</table></div>
+<div class="box box-tip"><strong>PvP payout flow:</strong> active bounties are claimed automatically on valid PvP kills. No manual claim command is required after the kill.</div>
+</section>
+
+<!-- ── CLAIMS ── -->
+<section aria-labelledby="claims-title" class="reveal" data-doc-kind="system" data-doc-section="claims" data-section="claims" id="claims">
+<h2 id="claims-title"><span class="ico">▣</span> Claims &amp; Land</h2>
+<p>Factions protect land by purchasing claim blocks and using the <strong>golden shovel</strong> to select corners of an area. Claimed land prevents outsiders from building or breaking blocks.</p><div class="section-summary">This section contains 12 structured rows across 3 table groups, with ▣ Claims &amp; Land as the canonical topic.</div>
+<div class="box box-info">
+<strong>Claim tool:</strong> <code>minecraft:golden_shovel</code> — right-click two corners to define the claim area. Max area: <strong>10,000 blocks</strong>. Cost: <strong>$5/block</strong>. Sell rate: <strong>$3/block</strong>.
+      </div>
+<h3>Claiming Land</h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-claim-buy" data-command-system="claims"><td class="cmd">/f:claim buy<button aria-label="Copy /f:claim buy" class="copy-btn" data-copy-value="/f:claim buy" type="button">Copy</button></td><td class="desc">Confirm purchase of the selected claim area.</td></tr>
+<tr data-command-id="f-claim-sell" data-command-system="claims"><td class="cmd">/f:claim sell<button aria-label="Copy /f:claim sell" class="copy-btn" data-copy-value="/f:claim sell" type="button">Copy</button></td><td class="desc">Release and sell back a claim you are standing in.</td></tr>
+<tr data-command-id="f-claim-info" data-command-system="claims"><td class="cmd">/f:claim info<button aria-label="Copy /f:claim info" class="copy-btn" data-copy-value="/f:claim info" type="button">Copy</button></td><td class="desc">Show info about the claim you are standing in.</td></tr>
+<tr data-command-id="f-claim-list" data-command-system="claims"><td class="cmd">/f:claim list<button aria-label="Copy /f:claim list" class="copy-btn" data-copy-value="/f:claim list" type="button">Copy</button></td><td class="desc">List all of your faction's claims.</td></tr>
+<tr data-command-id="f-claim-cancel" data-command-system="claims"><td class="cmd">/f:claim cancel<button aria-label="Copy /f:claim cancel" class="copy-btn" data-copy-value="/f:claim cancel" type="button">Copy</button></td><td class="desc">Cancel an in-progress claim selection.</td></tr>
+<tr data-command-id="f-claimblocks" data-command-system="claims"><td class="cmd">/f:claimblocks<button aria-label="Copy /f:claimblocks" class="copy-btn" data-copy-value="/f:claimblocks" type="button">Copy</button></td><td class="desc">Show faction's current claim block balance.</td></tr>
+<tr data-command-id="f-claimblocks-buy" data-command-system="claims"><td class="cmd">/f:claimblocks buy &lt;n&gt;<button aria-label="Copy /f:claimblocks buy &lt;n&gt;" class="copy-btn" data-copy-value="/f:claimblocks buy &lt;n&gt;" type="button">Copy</button></td><td class="desc">Purchase additional claim blocks.</td></tr>
+</tbody>
+</table></div>
+<h3>Trust &amp; Access</h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-claim-trust" data-command-system="claims"><td class="cmd">/f:claim trust &lt;player&gt;<button aria-label="Copy /f:claim trust &lt;player&gt;" class="copy-btn" data-copy-value="/f:claim trust &lt;player&gt;" type="button">Copy</button></td><td class="desc">Allow a player to build in your claim.</td></tr>
+<tr data-command-id="f-untrust" data-command-system="claims"><td class="cmd">/f:untrust &lt;player&gt;<button aria-label="Copy /f:untrust &lt;player&gt;" class="copy-btn" data-copy-value="/f:untrust &lt;player&gt;" type="button">Copy</button></td><td class="desc">Revoke a player's build access.</td></tr>
+</tbody>
+</table></div>
+<h3>Advanced Claims <span class="tag tag-phase3">phase3_warraid</span></h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-claim-visualize-sec" data-command-system="claims"><td class="cmd">/f:claim visualize &lt;particles|blocks&gt; [sec]<button aria-label="Copy /f:claim visualize &lt;particles|blocks&gt; [sec]" class="copy-btn" data-copy-value="/f:claim visualize &lt;particles|blocks&gt; [sec]" type="button">Copy</button></td><td class="desc">Show claim borders visually.</td></tr>
+<tr data-command-id="f-claim-transfer" data-command-system="claims"><td class="cmd">/f:claim transfer &quot;faction&quot;<button aria-label="Copy /f:claim transfer &quot;faction&quot;" class="copy-btn" data-copy-value="/f:claim transfer &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Transfer a claim to another faction (e.g., war prize).</td></tr>
+<tr data-command-id="f-claim-landmark" data-command-system="claims"><td class="cmd">/f:claim landmark &lt;set|list|remove&gt;<button aria-label="Copy /f:claim landmark &lt;set|list|remove&gt;" class="copy-btn" data-copy-value="/f:claim landmark &lt;set|list|remove&gt;" type="button">Copy</button></td><td class="desc">Manage named landmark points within claims.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── POWER ── -->
+<section aria-labelledby="power-title" class="reveal" data-doc-kind="system" data-doc-section="power" data-section="power" id="power">
+<h2 id="power-title"><span class="ico">◆</span> Power &amp; Upgrades</h2>
+<p>Factions earn <strong>power points</strong> through activity (kills, missions, etc.). Power determines faction level, which unlocks upgrades and increases vault capacity and warp slots.</p><div class="section-summary">This section contains 3 structured rows across 1 table group, with ◆ Power &amp; Upgrades as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-power" data-command-system="power"><td class="cmd">/f:power<button aria-label="Copy /f:power" class="copy-btn" data-copy-value="/f:power" type="button">Copy</button></td><td class="desc">Show your faction's current power and level.</td></tr>
+<tr data-command-id="f-power-top" data-command-system="power"><td class="cmd">/f:power top<button aria-label="Copy /f:power top" class="copy-btn" data-copy-value="/f:power top" type="button">Copy</button></td><td class="desc">Leaderboard of top factions by power.</td></tr>
+<tr data-command-id="f-upgrade" data-command-system="power"><td class="cmd">/f:upgrade &lt;upgradeId&gt;<button aria-label="Copy /f:upgrade &lt;upgradeId&gt;" class="copy-btn" data-copy-value="/f:upgrade &lt;upgradeId&gt;" type="button">Copy</button></td><td class="desc">Purchase a faction upgrade using power points.</td></tr>
+</tbody>
+</table></div>
+<div class="box box-tip">
+        Home territory buffs grant passive effects to faction members fighting inside their own claimed land. Enable via <code>home_territory_buffs_v1</code> (on by default).
+      </div>
+</section>
+<!-- ── RANKS ── -->
+<section aria-labelledby="ranks-title" class="reveal" data-doc-kind="system" data-doc-section="ranks" data-section="ranks" id="ranks">
+<h2 id="ranks-title"><span class="ico">◈</span> Ranks</h2>
+<p>Custom faction roles with granular permissions. Leaders can create roles, assign permission nodes, and apply pre-built templates.</p><div class="section-summary">This section contains 8 structured rows across 1 table group, with ◈ Ranks as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-rank-list" data-command-system="ranks"><td class="cmd">/f:rank list<button aria-label="Copy /f:rank list" class="copy-btn" data-copy-value="/f:rank list" type="button">Copy</button></td><td class="desc">List all faction ranks and their permissions.</td></tr>
+<tr data-command-id="f-rank-create" data-command-system="ranks"><td class="cmd">/f:rank create &quot;name&quot;<button aria-label="Copy /f:rank create &quot;name&quot;" class="copy-btn" data-copy-value="/f:rank create &quot;name&quot;" type="button">Copy</button></td><td class="desc">Create a new rank.</td></tr>
+<tr data-command-id="f-rank-delete" data-command-system="ranks"><td class="cmd">/f:rank delete &quot;name&quot;<button aria-label="Copy /f:rank delete &quot;name&quot;" class="copy-btn" data-copy-value="/f:rank delete &quot;name&quot;" type="button">Copy</button></td><td class="desc">Delete a rank.</td></tr>
+<tr data-command-id="f-rank-perms" data-command-system="ranks"><td class="cmd">/f:rank perms &quot;rank&quot; &lt;add|remove|show&gt; &lt;perm&gt;<button aria-label="Copy /f:rank perms &quot;rank&quot; &lt;add|remove|show&gt; &lt;perm&gt;" class="copy-btn" data-copy-value="/f:rank perms &quot;rank&quot; &lt;add|remove|show&gt; &lt;perm&gt;" type="button">Copy</button></td><td class="desc">Manage permissions for a rank.</td></tr>
+<tr data-command-id="f-rank-assign" data-command-system="ranks"><td class="cmd">/f:rank assign &lt;player&gt; &quot;rank&quot;<button aria-label="Copy /f:rank assign &lt;player&gt; &quot;rank&quot;" class="copy-btn" data-copy-value="/f:rank assign &lt;player&gt; &quot;rank&quot;" type="button">Copy</button></td><td class="desc">Assign a rank to a faction member.</td></tr>
+<tr data-command-id="f-rank-unassign" data-command-system="ranks"><td class="cmd">/f:rank unassign &lt;player&gt;<button aria-label="Copy /f:rank unassign &lt;player&gt;" class="copy-btn" data-copy-value="/f:rank unassign &lt;player&gt;" type="button">Copy</button></td><td class="desc">Remove a player's rank assignment.</td></tr>
+<tr data-command-id="f-rank-templates" data-command-system="ranks"><td class="cmd">/f:rank templates<button aria-label="Copy /f:rank templates" class="copy-btn" data-copy-value="/f:rank templates" type="button">Copy</button></td><td class="desc">List available rank templates.</td></tr>
+<tr data-command-id="f-rank-template" data-command-system="ranks"><td class="cmd">/f:rank template &quot;rank&quot; &quot;templateName&quot;<button aria-label="Copy /f:rank template &quot;rank&quot; &quot;templateName&quot;" class="copy-btn" data-copy-value="/f:rank template &quot;rank&quot; &quot;templateName&quot;" type="button">Copy</button></td><td class="desc">Apply a template's permissions to a rank.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── DIPLOMACY ── -->
+<section aria-labelledby="diplomacy-title" class="reveal" data-doc-kind="system" data-doc-section="diplomacy" data-section="diplomacy" id="diplomacy">
+<h2 id="diplomacy-title"><span class="ico">☍</span> Diplomacy</h2>
+<p>Factions negotiate alliances and truces. Pacts must be accepted by both parties and can be broken unilaterally (with penalties if <code>diplomacy_penalties_v1</code> is enabled).</p><div class="section-summary">This section contains 5 structured rows across 1 table group, with ☍ Diplomacy as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-ally" data-command-system="diplomacy"><td class="cmd">/f:ally &quot;faction&quot;<button aria-label="Copy /f:ally &quot;faction&quot;" class="copy-btn" data-copy-value="/f:ally &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Propose an alliance with another faction.</td></tr>
+<tr data-command-id="f-truce" data-command-system="diplomacy"><td class="cmd">/f:truce &quot;faction&quot;<button aria-label="Copy /f:truce &quot;faction&quot;" class="copy-btn" data-copy-value="/f:truce &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Propose a truce.</td></tr>
+<tr data-command-id="f-pact-accept" data-command-system="diplomacy"><td class="cmd">/f:pact accept &quot;faction&quot;<button aria-label="Copy /f:pact accept &quot;faction&quot;" class="copy-btn" data-copy-value="/f:pact accept &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Accept a pending pact proposal.</td></tr>
+<tr data-command-id="f-pact-deny" data-command-system="diplomacy"><td class="cmd">/f:pact deny &quot;faction&quot;<button aria-label="Copy /f:pact deny &quot;faction&quot;" class="copy-btn" data-copy-value="/f:pact deny &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Reject a pact proposal.</td></tr>
+<tr data-command-id="f-pact-break" data-command-system="diplomacy"><td class="cmd">/f:pact break &quot;faction&quot;<button aria-label="Copy /f:pact break &quot;faction&quot;" class="copy-btn" data-copy-value="/f:pact break &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Unilaterally end an active pact.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── WAR ── -->
+<section aria-labelledby="war-title" class="reveal" data-doc-kind="system" data-doc-section="war" data-section="war" id="war">
+<h2 id="war-title"><span class="ico">⚔</span> War &amp; Raids <span class="tag tag-phase3" style="font-size:12px;margin-left:8px">phase3_warraid</span></h2>
+<p>Declared wars allow factions to raid each other's claimed territory. Raid windows can be restricted by admins to specific times. War has a cooldown and requires mutual agreement (unless declined).</p><div class="section-summary">This section contains 10 structured rows across 2 table groups, with ⚔ War &amp; Raids phase3_warraid as the canonical topic.</div>
+<h3>War Commands</h3>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-war-stake" data-command-system="war"><td class="cmd">/f:war &quot;faction&quot; [stake]<button aria-label="Copy /f:war &quot;faction&quot; [stake]" class="copy-btn" data-copy-value="/f:war &quot;faction&quot; [stake]" type="button">Copy</button></td><td class="desc">Declare war. Optional resource stake requires phase3.</td></tr>
+<tr data-command-id="f-war-accept" data-command-system="war"><td class="cmd">/f:war accept &quot;faction&quot;<button aria-label="Copy /f:war accept &quot;faction&quot;" class="copy-btn" data-copy-value="/f:war accept &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Accept an incoming war declaration.</td></tr>
+<tr data-command-id="f-war-decline" data-command-system="war"><td class="cmd">/f:war decline &quot;faction&quot;<button aria-label="Copy /f:war decline &quot;faction&quot;" class="copy-btn" data-copy-value="/f:war decline &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Decline a war declaration.</td></tr>
+<tr data-command-id="f-war-ceasefire" data-command-system="war"><td class="cmd">/f:war ceasefire &quot;faction&quot;<button aria-label="Copy /f:war ceasefire &quot;faction&quot;" class="copy-btn" data-copy-value="/f:war ceasefire &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Propose a ceasefire during active war. <span class="tag tag-phase3">phase3</span></td></tr>
+<tr data-command-id="f-raidstatus" data-command-system="war"><td class="cmd">/f:raidstatus<button aria-label="Copy /f:raidstatus" class="copy-btn" data-copy-value="/f:raidstatus" type="button">Copy</button></td><td class="desc">Check whether raiding is currently permitted and why.</td></tr>
+</tbody>
+</table></div>
+<h3>Raid Protection Rules</h3>
+<p>Raids can be blocked by the following conditions (shown by <code>/f:raidstatus</code>):</p>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Condition</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr data-command-id="grace" data-command-system="war"><td class="cmd">grace<button aria-label="Copy grace" class="copy-btn" data-copy-value="grace" type="button">Copy</button></td><td class="desc">Map reset grace period is active.</td></tr>
+<tr data-command-id="window" data-command-system="war" data-requires-admin="true"><td class="cmd">window<button aria-label="Copy window" class="copy-btn" data-copy-value="window" type="button">Copy</button></td><td class="desc">Outside the admin-configured raid window.</td></tr>
+<tr data-command-id="offline" data-command-system="war"><td class="cmd">offline<button aria-label="Copy offline" class="copy-btn" data-copy-value="offline" type="button">Copy</button></td><td class="desc">Defender offline protection is active.</td></tr>
+<tr data-command-id="shield" data-command-system="war"><td class="cmd">shield<button aria-label="Copy shield" class="copy-btn" data-copy-value="shield" type="button">Copy</button></td><td class="desc">Defender has an active raid shield.</td></tr>
+<tr data-command-id="war" data-command-system="war"><td class="cmd">war<button aria-label="Copy war" class="copy-btn" data-copy-value="war" type="button">Copy</button></td><td class="desc">No active war exists between the factions.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── MISSIONS ── -->
+<section aria-labelledby="missions-title" class="reveal" data-doc-kind="system" data-doc-section="missions" data-section="missions" id="missions">
+<h2 id="missions-title"><span class="ico">◉</span> Missions <span class="tag tag-phase2" style="font-size:12px;margin-left:8px">phase2_missions</span></h2>
+<p>Missions are tracked objectives that reward factions with power points and money on completion. Enable <code>phase2_missions</code> in config to activate.</p><div class="section-summary">This section contains 2 structured rows across 1 table group, with ◉ Missions phase2_missions as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-missions" data-command-system="missions"><td class="cmd">/f:missions<button aria-label="Copy /f:missions" class="copy-btn" data-copy-value="/f:missions" type="button">Copy</button></td><td class="desc">List available missions and progress.</td></tr>
+<tr data-command-id="f-mission-claim" data-command-system="missions"><td class="cmd">/f:mission claim &lt;missionId&gt;<button aria-label="Copy /f:mission claim &lt;missionId&gt;" class="copy-btn" data-copy-value="/f:mission claim &lt;missionId&gt;" type="button">Copy</button></td><td class="desc">Claim the reward for a completed mission.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── ECONOMY ── -->
+<section aria-labelledby="economy-title" class="reveal" data-doc-kind="economy" data-doc-section="economy" data-section="economy" id="economy">
+<h2 id="economy-title"><span class="ico">$</span> Currency</h2>
+<p>The server uses a scoreboard-backed currency (<code>money</code> objective). Players earn money by selling items and completing missions; spend it in the shop and auction house.</p><div class="section-summary">This section contains 3 structured rows across 1 table group, with $ Currency as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-bal" data-command-system="economy"><td class="cmd">/f:bal / /f:balance<button aria-label="Copy /f:bal" class="copy-btn" data-copy-value="/f:bal" type="button">Copy</button></td><td class="desc">Check your current balance.</td></tr>
+<tr data-command-id="f-pay" data-command-system="economy"><td class="cmd">/f:pay &lt;player&gt; &lt;amount&gt;<button aria-label="Copy /f:pay &lt;player&gt; &lt;amount&gt;" class="copy-btn" data-copy-value="/f:pay &lt;player&gt; &lt;amount&gt;" type="button">Copy</button></td><td class="desc">Transfer money to another player. Max: $1,000,000,000.</td></tr>
+<tr data-command-id="f-baltop" data-command-system="economy"><td class="cmd">/f:baltop<button aria-label="Copy /f:baltop" class="copy-btn" data-copy-value="/f:baltop" type="button">Copy</button></td><td class="desc">Richest players leaderboard.</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section aria-labelledby="daily-title" class="reveal" data-doc-kind="economy" data-doc-section="daily" data-section="daily" id="daily">
+<h2 id="daily-title"><span class="ico">◐</span> Daily Faction Rewards</h2>
+<p>Daily rewards give players a small recurring reason to check in and support their faction. Claims reset by UTC day.</p>
+<div class="section-summary">Each player can claim once per UTC day. Each faction can receive one faction bonus per UTC day. Rewards can include player money, faction vault money, and claim blocks.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-daily" data-command-system="daily"><td class="cmd">/f:daily<button aria-label="Copy /f:daily" class="copy-btn" data-copy-value="/f:daily" type="button">Copy</button></td><td class="desc">View your daily reward status and faction bonus state.</td></tr>
+<tr data-command-id="f-daily-claim" data-command-system="daily"><td class="cmd">/f:daily claim<button aria-label="Copy /f:daily claim" class="copy-btn" data-copy-value="/f:daily claim" type="button">Copy</button></td><td class="desc">Claim today's personal reward and apply the faction bonus when available.</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<!-- ── SHOP ── -->
+<section aria-labelledby="shop-title" class="reveal" data-doc-kind="economy" data-doc-section="shop" data-section="shop" id="shop">
+<h2 id="shop-title"><span class="ico">⊡</span> Shop</h2>
+<p>A chest-UI shop with categories, quantity cycling, buy preview, and a sell GUI. Tax from <code>/f:vault tax</code> applies to shop transactions.</p><div class="section-summary">This section contains 4 structured rows across 1 table group, with ⊡ Shop as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-shop" data-command-system="shop"><td class="cmd">/f:shop<button aria-label="Copy /f:shop" class="copy-btn" data-copy-value="/f:shop" type="button">Copy</button></td><td class="desc">Open the shop browser GUI.</td></tr>
+<tr data-command-id="f-sell" data-command-system="shop"><td class="cmd">/f:sell<button aria-label="Copy /f:sell" class="copy-btn" data-copy-value="/f:sell" type="button">Copy</button></td><td class="desc">Sell the item currently held in your hand.</td></tr>
+<tr data-command-id="f-sellall" data-command-system="shop"><td class="cmd">/f:sellall<button aria-label="Copy /f:sellall" class="copy-btn" data-copy-value="/f:sellall" type="button">Copy</button></td><td class="desc">Sell all sellable items in your inventory at once.</td></tr>
+<tr data-command-id="f-sellgui" data-command-system="shop"><td class="cmd">/f:sellgui<button aria-label="Copy /f:sellgui" class="copy-btn" data-copy-value="/f:sellgui" type="button">Copy</button></td><td class="desc">Open the sell GUI to select items to sell.</td></tr>
+</tbody>
+</table></div>
+<h3>Default Prices (selected)</h3>
+<div class="price-header"><span>Item</span><span>Buy</span><span>Sell</span></div>
+<div class="shop-category">Ores &amp; Gems</div>
+<div class="price-row"><span class="item-name">Coal</span><span class="buy">$10</span><span class="sell">$5</span></div>
+<div class="price-row"><span class="item-name">Iron Ingot</span><span class="buy">$50</span><span class="sell">$25</span></div>
+<div class="price-row"><span class="item-name">Gold Ingot</span><span class="buy">$100</span><span class="sell">$50</span></div>
+<div class="price-row"><span class="item-name">Diamond</span><span class="buy">$500</span><span class="sell">$250</span></div>
+<div class="price-row"><span class="item-name">Netherite Ingot</span><span class="buy">$2,000</span><span class="sell">$1,000</span></div>
+<div class="shop-category">Combat &amp; Special</div>
+<div class="price-row"><span class="item-name">Iron Sword</span><span class="buy">$250</span><span class="sell">$125</span></div>
+<div class="price-row"><span class="item-name">Diamond Sword</span><span class="buy">$900</span><span class="sell">$450</span></div>
+<div class="price-row"><span class="item-name">Elytra</span><span class="buy">$8,000</span><span class="sell">$4,000</span></div>
+<div class="price-row"><span class="item-name">Totem of Undying</span><span class="buy">$5,000</span><span class="sell">$2,500</span></div>
+<div class="price-row"><span class="item-name">Custom Sword</span><span class="buy">$3,500</span><span class="sell">$1,750</span></div>
+<div class="box box-tip" style="margin-top:14px">
+        All prices are configurable in <code>config.js → SHOP_ITEMS</code>. Add or remove items by editing that object.
+      </div>
+</section>
+<!-- ── AUCTION ── -->
+<section aria-labelledby="auction-title" class="reveal" data-doc-kind="economy" data-doc-section="auction" data-section="auction" id="auction">
+<h2 id="auction-title"><span class="ico">⬡</span> Auction House</h2>
+<p>Players list items for direct purchase. Listings are identified by a numeric ID. Use <code>/f:ah browse</code> to discover active listings.</p><div class="section-summary">This section contains 4 structured rows across 1 table group, with ⬡ Auction House as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-ah" data-command-system="auction"><td class="cmd">/f:ah / /f:ah browse<button aria-label="Copy /f:ah" class="copy-btn" data-copy-value="/f:ah" type="button">Copy</button></td><td class="desc">Browse active auction listings.</td></tr>
+<tr data-command-id="f-ah-sell-amount" data-command-system="auction"><td class="cmd">/f:ah sell &lt;price&gt; [amount]<button aria-label="Copy /f:ah sell &lt;price&gt; [amount]" class="copy-btn" data-copy-value="/f:ah sell &lt;price&gt; [amount]" type="button">Copy</button></td><td class="desc">List held item(s) for sale at the given price.</td></tr>
+<tr data-command-id="f-ah-buy" data-command-system="auction"><td class="cmd">/f:ah buy &lt;listingId&gt;<button aria-label="Copy /f:ah buy &lt;listingId&gt;" class="copy-btn" data-copy-value="/f:ah buy &lt;listingId&gt;" type="button">Copy</button></td><td class="desc">Purchase a specific listing by ID.</td></tr>
+<tr data-command-id="f-ah-cancel" data-command-system="auction"><td class="cmd">/f:ah cancel &lt;listingId&gt;<button aria-label="Copy /f:ah cancel &lt;listingId&gt;" class="copy-btn" data-copy-value="/f:ah cancel &lt;listingId&gt;" type="button">Copy</button></td><td class="desc">Cancel and reclaim your own listing.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── VAULT ── -->
+<section aria-labelledby="vault-title" class="reveal" data-doc-kind="economy" data-doc-section="vault" data-section="vault" id="vault">
+<h2 id="vault-title"><span class="ico">▭</span> Faction Vault</h2>
+<p>A shared faction treasury. Vault capacity scales with faction level/upgrades. A tax rate (0–15%) is deducted from member transactions and deposited automatically.</p><div class="section-summary">This section contains 5 structured rows across 1 table group, with ▭ Faction Vault as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-vault" data-command-system="vault"><td class="cmd">/f:vault<button aria-label="Copy /f:vault" class="copy-btn" data-copy-value="/f:vault" type="button">Copy</button></td><td class="desc">View vault balance and capacity.</td></tr>
+<tr data-command-id="f-vault-deposit" data-command-system="vault"><td class="cmd">/f:vault deposit &lt;amount&gt;<button aria-label="Copy /f:vault deposit &lt;amount&gt;" class="copy-btn" data-copy-value="/f:vault deposit &lt;amount&gt;" type="button">Copy</button></td><td class="desc">Deposit money into the faction vault.</td></tr>
+<tr data-command-id="f-vault-withdraw" data-command-system="vault"><td class="cmd">/f:vault withdraw &lt;amount&gt;<button aria-label="Copy /f:vault withdraw &lt;amount&gt;" class="copy-btn" data-copy-value="/f:vault withdraw &lt;amount&gt;" type="button">Copy</button></td><td class="desc">Withdraw money from the vault (leader/captain).</td></tr>
+<tr data-command-id="f-vault-tax" data-command-system="vault"><td class="cmd">/f:vault tax &lt;0-15&gt;<button aria-label="Copy /f:vault tax &lt;0-15&gt;" class="copy-btn" data-copy-value="/f:vault tax &lt;0-15&gt;" type="button">Copy</button></td><td class="desc">Set the faction tax rate (% deducted from pay &amp; shop).</td></tr>
+<tr data-command-id="f-vault-ledger-page" data-command-system="vault"><td class="cmd">/f:vault ledger [page]<button aria-label="Copy /f:vault ledger [page]" class="copy-btn" data-copy-value="/f:vault ledger [page]" type="button">Copy</button></td><td class="desc">View transaction history.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── TELEPORT ── -->
+<section aria-labelledby="teleport-title" class="reveal" data-doc-kind="utility" data-doc-section="teleport" data-section="teleport" id="teleport">
+<h2 id="teleport-title"><span class="ico">↝</span> Teleportation</h2>
+<p>All teleport commands share a <strong>120-second cooldown</strong> and a <strong>5-second warmup</strong> (moving cancels it). Combat-tagged players cannot teleport.</p><div class="section-summary">This section contains 6 structured rows across 1 table group, with ↝ Teleportation as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-tpa" data-command-system="teleport"><td class="cmd">/f:tpa &lt;player&gt;<button aria-label="Copy /f:tpa &lt;player&gt;" class="copy-btn" data-copy-value="/f:tpa &lt;player&gt;" type="button">Copy</button></td><td class="desc">Send a teleport request to a player. Expires after 60 seconds.</td></tr>
+<tr data-command-id="f-tpaccept" data-command-system="teleport"><td class="cmd">/f:tpaccept<button aria-label="Copy /f:tpaccept" class="copy-btn" data-copy-value="/f:tpaccept" type="button">Copy</button></td><td class="desc">Accept an incoming TPA request.</td></tr>
+<tr data-command-id="f-tpdecline" data-command-system="teleport"><td class="cmd">/f:tpdecline<button aria-label="Copy /f:tpdecline" class="copy-btn" data-copy-value="/f:tpdecline" type="button">Copy</button></td><td class="desc">Decline an incoming TPA request.</td></tr>
+<tr data-command-id="f-tpcancel" data-command-system="teleport"><td class="cmd">/f:tpcancel<button aria-label="Copy /f:tpcancel" class="copy-btn" data-copy-value="/f:tpcancel" type="button">Copy</button></td><td class="desc">Cancel your own pending TPA request.</td></tr>
+<tr data-command-id="f-home-name" data-command-system="teleport"><td class="cmd">/f:home [&quot;name&quot;]<button aria-label="Copy /f:home [&quot;name&quot;]" class="copy-btn" data-copy-value="/f:home [&quot;name&quot;]" type="button">Copy</button></td><td class="desc">Teleport to your personal home or a faction warp named <code>home</code>.</td></tr>
+<tr data-command-id="f-spawn" data-command-system="teleport"><td class="cmd">/f:spawn / /f:rtp<button aria-label="Copy /f:spawn" class="copy-btn" data-copy-value="/f:spawn" type="button">Copy</button></td><td class="desc">Random teleport (500–10,000 blocks from origin). 5-minute cooldown.</td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── CHAT ── -->
+<section aria-labelledby="chat-title" class="reveal" data-doc-kind="utility" data-doc-section="chat" data-section="chat" id="chat">
+<h2 id="chat-title"><span class="ico">☷</span> Chat</h2>
+<p>Players can toggle between public, faction, and alliance chat channels. Faction and alliance messages are only visible to respective members.</p><div class="section-summary">This section contains 3 structured rows across 1 table group, with ☷ Chat as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-chat" data-command-system="chat"><td class="cmd">/f:chat &lt;team|alliance|public|toggle&gt;<button aria-label="Copy /f:chat &lt;team|alliance|public|toggle&gt;" class="copy-btn" data-copy-value="/f:chat &lt;team|alliance|public|toggle&gt;" type="button">Copy</button></td><td class="desc">Switch or toggle your active chat channel.</td></tr>
+<tr data-command-id="f-c" data-command-system="chat"><td class="cmd">/f:c &quot;message&quot;<button aria-label="Copy /f:c &quot;message&quot;" class="copy-btn" data-copy-value="/f:c &quot;message&quot;" type="button">Copy</button></td><td class="desc">Send a single message to faction chat without switching channels.</td></tr>
+<tr data-command-id="f-ac" data-command-system="chat" data-feature-flag="phase4_admin" data-requires-admin="true"><td class="cmd">/f:ac &quot;message&quot;<button aria-label="Copy /f:ac &quot;message&quot;" class="copy-btn" data-copy-value="/f:ac &quot;message&quot;" type="button">Copy</button></td><td class="desc">Send to alliance chat. <span class="tag tag-phase4">phase4_admin</span></td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── MODERATION ── -->
+<section aria-labelledby="moderation-title" class="reveal" data-doc-kind="utility" data-doc-section="moderation" data-section="moderation" id="moderation">
+<h2 id="moderation-title"><span class="ico">⊛</span> Moderation</h2>
+<p>Mutes and bans are time-based. Duration format uses days; max mute duration is <strong>365 days</strong>. Ban commands require <code>phase4_admin</code>.</p><div class="section-summary">This section contains 5 structured rows across 1 table group, with ⊛ Moderation as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th><th></th></tr></thead>
+<tbody>
+<tr data-command-id="f-mute" data-command-system="moderation"><td class="cmd">/f:mute &lt;player&gt; &lt;duration&gt;<button aria-label="Copy /f:mute &lt;player&gt; &lt;duration&gt;" class="copy-btn" data-copy-value="/f:mute &lt;player&gt; &lt;duration&gt;" type="button">Copy</button></td><td class="desc">Mute a player for the given duration.</td><td></td></tr>
+<tr data-command-id="f-unmute" data-command-system="moderation"><td class="cmd">/f:unmute &lt;player&gt;<button aria-label="Copy /f:unmute &lt;player&gt;" class="copy-btn" data-copy-value="/f:unmute &lt;player&gt;" type="button">Copy</button></td><td class="desc">Remove a mute.</td><td></td></tr>
+<tr data-command-id="f-ban-reason" data-command-system="moderation"><td class="cmd">/f:ban &lt;player&gt; &lt;duration&gt; [&quot;reason&quot;]<button aria-label="Copy /f:ban &lt;player&gt; &lt;duration&gt; [&quot;reason&quot;]" class="copy-btn" data-copy-value="/f:ban &lt;player&gt; &lt;duration&gt; [&quot;reason&quot;]" type="button">Copy</button></td><td class="desc">Ban a player.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-unban" data-command-system="moderation"><td class="cmd">/f:unban &lt;player&gt;<button aria-label="Copy /f:unban &lt;player&gt;" class="copy-btn" data-copy-value="/f:unban &lt;player&gt;" type="button">Copy</button></td><td class="desc">Unban a player.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-banlist-page" data-command-system="moderation"><td class="cmd">/f:banlist [page]<button aria-label="Copy /f:banlist [page]" class="copy-btn" data-copy-value="/f:banlist [page]" type="button">Copy</button></td><td class="desc">View the active ban list.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+</tbody>
+</table></div>
+</section>
+<!-- ── ADMIN ── -->
+<section aria-labelledby="admin-title" class="reveal" data-doc-kind="operator" data-doc-section="admin" data-section="admin" id="admin">
+<h2 id="admin-title"><span class="ico">⊕</span> Admin Commands</h2>
+<p>Requires the <code>admin</code> tag. Grant it with <code>/tag &lt;player&gt; add admin</code>.</p><div class="section-summary">This section contains 18 structured rows across 1 table group, with ⊕ Admin Commands as the canonical topic.</div>
+<div class="box box-warn">
+        Some commands additionally require <code>phase4_admin: true</code> in config.
+      </div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Command</th><th>Description</th><th></th></tr></thead>
+<tbody>
+<tr data-command-id="f-admin-gui" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin gui<button aria-label="Copy /f:admin gui" class="copy-btn" data-copy-value="/f:admin gui" type="button">Copy</button></td><td class="desc">Open the admin control panel GUI.</td><td></td></tr>
+<tr data-command-id="f-admin-team" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin team<button aria-label="Copy /f:admin team" class="copy-btn" data-copy-value="/f:admin team" type="button">Copy</button></td><td class="desc">Admin faction management panel.</td><td></td></tr>
+<tr data-command-id="f-admin-audit-page-text" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin audit [page|text &lt;page&gt;]<button aria-label="Copy /f:admin audit [page|text &lt;page&gt;]" class="copy-btn" data-copy-value="/f:admin audit [page|text &lt;page&gt;]" type="button">Copy</button></td><td class="desc">View the action audit log.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-test-run" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin test run &lt;suite&gt;<button aria-label="Copy /f:admin test run &lt;suite&gt;" class="copy-btn" data-copy-value="/f:admin test run &lt;suite&gt;" type="button">Copy</button></td><td class="desc">Run a smoke test. Suites: <code>smoke</code>, <code>economy</code>, <code>warraid</code>, <code>claims</code>, <code>moderation</code>.</td><td></td></tr>
+<tr data-command-id="f-admin-mapreset-now" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin mapreset now<button aria-label="Copy /f:admin mapreset now" class="copy-btn" data-copy-value="/f:admin mapreset now" type="button">Copy</button></td><td class="desc">Trigger an immediate map reset.</td><td></td></tr>
+<tr data-command-id="f-admin-raidwindow" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin raidwindow &lt;set|list|clear&gt;<button aria-label="Copy /f:admin raidwindow &lt;set|list|clear&gt;" class="copy-btn" data-copy-value="/f:admin raidwindow &lt;set|list|clear&gt;" type="button">Copy</button></td><td class="desc">Configure allowed raid windows.</td><td></td></tr>
+<tr data-command-id="f-admin-hologram-set" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin hologram set &lt;id&gt;<button aria-label="Copy /f:admin hologram set &lt;id&gt;" class="copy-btn" data-copy-value="/f:admin hologram set &lt;id&gt;" type="button">Copy</button></td><td class="desc">Place a hologram anchor at your position.</td><td></td></tr>
+<tr data-command-id="f-admin-faction-set" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin faction set ...<button aria-label="Copy /f:admin faction set ..." class="copy-btn" data-copy-value="/f:admin faction set ..." type="button">Copy</button></td><td class="desc">Force-set a faction property.</td><td></td></tr>
+<tr data-command-id="f-admin-faction-inspect" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin faction inspect &quot;name&quot;<button aria-label="Copy /f:admin faction inspect &quot;name&quot;" class="copy-btn" data-copy-value="/f:admin faction inspect &quot;name&quot;" type="button">Copy</button></td><td class="desc">Deep inspect faction data.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-notify-page" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:notify [page]<button aria-label="Copy /f:notify [page]" class="copy-btn" data-copy-value="/f:notify [page]" type="button">Copy</button></td><td class="desc">View admin notifications.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-ac" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:ac &quot;msg&quot;<button aria-label="Copy /f:ac &quot;msg&quot;" class="copy-btn" data-copy-value="/f:ac &quot;msg&quot;" type="button">Copy</button></td><td class="desc">Broadcast to all alliance channels.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-claim-freeze" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin claim freeze &lt;on|off|status&gt;<button aria-label="Copy /f:admin claim freeze &lt;on|off|status&gt;" class="copy-btn" data-copy-value="/f:admin claim freeze &lt;on|off|status&gt;" type="button">Copy</button></td><td class="desc">Globally freeze or inspect claim editing for administrative intervention.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-claim-snapshots" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin claim snapshots<button aria-label="Copy /f:admin claim snapshots" class="copy-btn" data-copy-value="/f:admin claim snapshots" type="button">Copy</button></td><td class="desc">List saved claim snapshots for rollback workflows.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-claim-restore-index" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin claim restore [index]<button aria-label="Copy /f:admin claim restore [index]" class="copy-btn" data-copy-value="/f:admin claim restore [index]" type="button">Copy</button></td><td class="desc">Restore a captured claim snapshot by index.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-war-zones" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin war zones<button aria-label="Copy /f:admin war zones" class="copy-btn" data-copy-value="/f:admin war zones" type="button">Copy</button></td><td class="desc">Show current war-zone state and active war telemetry.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-war-spectate" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin war spectate &quot;faction&quot;<button aria-label="Copy /f:admin war spectate &quot;faction&quot;" class="copy-btn" data-copy-value="/f:admin war spectate &quot;faction&quot;" type="button">Copy</button></td><td class="desc">Enter war spectate mode for a faction conflict.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-war-follow" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin war follow &lt;player&gt;<button aria-label="Copy /f:admin war follow &lt;player&gt;" class="copy-btn" data-copy-value="/f:admin war follow &lt;player&gt;" type="button">Copy</button></td><td class="desc">Follow a player during an active war session.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+<tr data-command-id="f-admin-war-stop" data-command-system="admin" data-requires-admin="true"><td class="cmd">/f:admin war stop<button aria-label="Copy /f:admin war stop" class="copy-btn" data-copy-value="/f:admin war stop" type="button">Copy</button></td><td class="desc">Force-stop the current war spectate/follow workflow.</td><td><span class="tag tag-phase4">phase4</span></td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section aria-labelledby="help-language-title" class="reveal" data-doc-kind="utility" data-doc-section="help-language" data-section="help-language" id="help-language">
+<h2 id="help-language-title"><span class="ico">Aa</span> Help GUI &amp; Language UI</h2>
+<p>The Help GUI now includes quick actions for faction bounties, daily faction rewards, and language selection. Players can switch languages without leaving the help flow.</p>
+<div class="section-summary">Use this section when documenting the in-game help surface rather than raw command syntax. Language selection is available directly inside the Help GUI and as a Help quick action.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Entry</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="f-help-language" data-command-system="help-language"><td class="cmd">/f:help<button aria-label="Copy /f:help" class="copy-btn" data-copy-value="/f:help" type="button">Copy</button></td><td class="desc">Open the Help GUI, including new quick actions for bounties, daily rewards, and language selection.</td></tr>
+<tr data-command-id="f-lang-code" data-command-system="help-language"><td class="cmd">/f:lang &lt;code&gt;<button aria-label="Copy /f:lang &lt;code&gt;" class="copy-btn" data-copy-value="/f:lang &lt;code&gt;" type="button">Copy</button></td><td class="desc">Switch the player's locale by language code.</td></tr>
+<tr data-command-id="help-action-language" data-command-system="help-language"><td class="cmd">Help → Language Selection<button aria-label="Copy Help Language Selection" class="copy-btn" data-copy-value="Help → Language Selection" type="button">Copy</button></td><td class="desc">Open the language picker from the Help GUI quick action list.</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<!-- ── I18N ── -->
+<section aria-labelledby="i18n-title" class="reveal" data-doc-kind="operator" data-doc-section="i18n" data-section="i18n" id="i18n">
+<h2 id="i18n-title"><span class="ico">◫</span> Localization</h2>
+<p>EliteFaction ships with 16 built-in locales. Players can switch language from the Help GUI or with <code>/f:lang &lt;code&gt;</code>; UI strings update immediately.</p><div class="section-summary">This section contains 16 structured rows across 1 table group, with ◫ Localization as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Code</th><th>Language</th></tr></thead>
+<tbody>
+<tr data-command-id="en-us" data-command-system="i18n" data-locale-code="en_us"><td class="cmd">en_us<button aria-label="Copy en_us" class="copy-btn" data-copy-value="en_us" type="button">Copy</button></td><td class="desc">English (US) — default</td></tr>
+<tr data-command-id="es-es" data-command-system="i18n" data-locale-code="es_es"><td class="cmd">es_es<button aria-label="Copy es_es" class="copy-btn" data-copy-value="es_es" type="button">Copy</button></td><td class="desc">Spanish</td></tr>
+<tr data-command-id="fr-fr" data-command-system="i18n" data-locale-code="fr_fr"><td class="cmd">fr_fr<button aria-label="Copy fr_fr" class="copy-btn" data-copy-value="fr_fr" type="button">Copy</button></td><td class="desc">French</td></tr>
+<tr data-command-id="pt-br" data-command-system="i18n" data-locale-code="pt_br"><td class="cmd">pt_br<button aria-label="Copy pt_br" class="copy-btn" data-copy-value="pt_br" type="button">Copy</button></td><td class="desc">Portuguese (Brazil)</td></tr>
+<tr data-command-id="pt-pt" data-command-system="i18n" data-locale-code="pt_pt"><td class="cmd">pt_pt<button aria-label="Copy pt_pt" class="copy-btn" data-copy-value="pt_pt" type="button">Copy</button></td><td class="desc">Portuguese (Portugal)</td></tr>
+<tr data-command-id="ru-ru" data-command-system="i18n" data-locale-code="ru_ru"><td class="cmd">ru_ru<button aria-label="Copy ru_ru" class="copy-btn" data-copy-value="ru_ru" type="button">Copy</button></td><td class="desc">Russian</td></tr>
+<tr data-command-id="zh-cn" data-command-system="i18n" data-locale-code="zh_cn"><td class="cmd">zh_cn<button aria-label="Copy zh_cn" class="copy-btn" data-copy-value="zh_cn" type="button">Copy</button></td><td class="desc">Chinese (Simplified)</td></tr>
+<tr data-command-id="ar-sa" data-command-system="i18n" data-locale-code="ar_sa"><td class="cmd">ar_sa<button aria-label="Copy ar_sa" class="copy-btn" data-copy-value="ar_sa" type="button">Copy</button></td><td class="desc">Arabic</td></tr>
+<tr data-command-id="hi-in" data-command-system="i18n" data-locale-code="hi_in"><td class="cmd">hi_in<button aria-label="Copy hi_in" class="copy-btn" data-copy-value="hi_in" type="button">Copy</button></td><td class="desc">Hindi</td></tr>
+<tr data-command-id="bn-bd" data-command-system="i18n" data-locale-code="bn_bd"><td class="cmd">bn_bd<button aria-label="Copy bn_bd" class="copy-btn" data-copy-value="bn_bd" type="button">Copy</button></td><td class="desc">Bengali</td></tr>
+<tr data-command-id="id-id" data-command-system="i18n" data-locale-code="id_id"><td class="cmd">id_id<button aria-label="Copy id_id" class="copy-btn" data-copy-value="id_id" type="button">Copy</button></td><td class="desc">Indonesian</td></tr>
+<tr data-command-id="nl-nl" data-command-system="i18n" data-locale-code="nl_nl"><td class="cmd">nl_nl<button aria-label="Copy nl_nl" class="copy-btn" data-copy-value="nl_nl" type="button">Copy</button></td><td class="desc">Dutch</td></tr>
+<tr data-command-id="sv-se" data-command-system="i18n" data-locale-code="sv_se"><td class="cmd">sv_se<button aria-label="Copy sv_se" class="copy-btn" data-copy-value="sv_se" type="button">Copy</button></td><td class="desc">Swedish</td></tr>
+<tr data-command-id="uk-ua" data-command-system="i18n" data-locale-code="uk_ua"><td class="cmd">uk_ua<button aria-label="Copy uk_ua" class="copy-btn" data-copy-value="uk_ua" type="button">Copy</button></td><td class="desc">Ukrainian</td></tr>
+<tr data-command-id="vi-vn" data-command-system="i18n" data-locale-code="vi_vn"><td class="cmd">vi_vn<button aria-label="Copy vi_vn" class="copy-btn" data-copy-value="vi_vn" type="button">Copy</button></td><td class="desc">Vietnamese</td></tr>
+<tr data-command-id="th-th" data-command-system="i18n" data-locale-code="th_th"><td class="cmd">th_th<button aria-label="Copy th_th" class="copy-btn" data-copy-value="th_th" type="button">Copy</button></td><td class="desc">Thai</td></tr>
+</tbody>
+</table></div>
+<p>To add a new locale, copy <code>BP/scripts/i18n/locales/en_us.js</code>, translate the values, and register it in <code>BP/scripts/i18n/index.js</code>.</p>
+</section>
+<section aria-labelledby="download-title" class="reveal cta-band" data-doc-kind="operator" data-doc-section="download" data-section="download" id="download">
+<div class="cta-copy">
+<h2 id="download-title"><span class="ico">↗</span> Download &amp; Deploy</h2>
+<p>Use the current CurseForge release for distribution, then keep this page as the operator-facing reference for setup, feature flags, and slash-command usage.</p>
+</div>
+<div class="cta-actions">
+<a class="button primary" href="https://www.curseforge.com/minecraft-bedrock/addons/elitefaction" rel="noopener noreferrer" target="_blank">Download on CurseForge</a>
+<a class="button" href="#install">View install steps</a>
+</div>
+</section>
+<!-- ── CONFIG ── -->
+<section aria-labelledby="config-title" class="reveal" data-doc-kind="operator" data-doc-section="config" data-section="config" id="config">
+<h2 id="config-title"><span class="ico">⚙</span> Config Reference</h2>
+<p>All tunable values live in <code>BP/scripts/config.js</code>. Edit before loading the world. This wiki documents the slash-command build and verified runtime values from the 1.2.0 package.</p><div class="section-summary">This section contains 16 structured rows across 1 table group, with ⚙ Config Reference as the canonical topic.</div>
+<div class="table-wrap"><table class="cmd-table">
+<thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr data-command-id="command-namespace" data-command-system="config" data-config-category="core" data-config-key="COMMAND_NAMESPACE Copy"><td class="cmd">COMMAND_NAMESPACE<button aria-label="Copy COMMAND_NAMESPACE" class="copy-btn" data-copy-value="COMMAND_NAMESPACE" type="button">Copy</button></td><td class="desc"><code>/f:</code></td><td class="desc">Slash command namespace used by the add-on.</td></tr>
+<tr data-command-id="admin-tag" data-command-system="config" data-config-category="moderation_admin" data-config-key="ADMIN_TAG Copy" data-requires-admin="true"><td class="cmd">ADMIN_TAG<button aria-label="Copy ADMIN_TAG" class="copy-btn" data-copy-value="ADMIN_TAG" type="button">Copy</button></td><td class="desc"><code>admin</code></td><td class="desc">Tag that grants admin access.</td></tr>
+<tr data-command-id="money-objective" data-command-system="config" data-config-category="economy" data-config-key="MONEY_OBJECTIVE Copy"><td class="cmd">MONEY_OBJECTIVE<button aria-label="Copy MONEY_OBJECTIVE" class="copy-btn" data-copy-value="MONEY_OBJECTIVE" type="button">Copy</button></td><td class="desc"><code>money</code></td><td class="desc">Scoreboard objective for currency.</td></tr>
+<tr data-command-id="claim-cost-per-block" data-command-system="config" data-config-category="claims_teams" data-config-key="CLAIM_COST_PER_BLOCK Copy"><td class="cmd">CLAIM_COST_PER_BLOCK<button aria-label="Copy CLAIM_COST_PER_BLOCK" class="copy-btn" data-copy-value="CLAIM_COST_PER_BLOCK" type="button">Copy</button></td><td class="desc"><code>5</code></td><td class="desc">Cost in $ to claim one block of area.</td></tr>
+<tr data-command-id="claim-sell-rate" data-command-system="config" data-config-category="claims_teams" data-config-key="CLAIM_SELL_RATE Copy"><td class="cmd">CLAIM_SELL_RATE<button aria-label="Copy CLAIM_SELL_RATE" class="copy-btn" data-copy-value="CLAIM_SELL_RATE" type="button">Copy</button></td><td class="desc"><code>3</code></td><td class="desc">$ returned per block when selling a claim.</td></tr>
+<tr data-command-id="claim-tool" data-command-system="config" data-config-category="claims_teams" data-config-key="CLAIM_TOOL Copy"><td class="cmd">CLAIM_TOOL<button aria-label="Copy CLAIM_TOOL" class="copy-btn" data-copy-value="CLAIM_TOOL" type="button">Copy</button></td><td class="desc"><code>golden_shovel</code></td><td class="desc">Item used to select claim corners.</td></tr>
+<tr data-command-id="max-claim-area" data-command-system="config" data-config-category="general" data-config-key="MAX_CLAIM_AREA Copy"><td class="cmd">MAX_CLAIM_AREA<button aria-label="Copy MAX_CLAIM_AREA" class="copy-btn" data-copy-value="MAX_CLAIM_AREA" type="button">Copy</button></td><td class="desc"><code>10000</code></td><td class="desc">Maximum XZ area per single claim.</td></tr>
+<tr data-command-id="tpa-timeout-ticks" data-command-system="config" data-config-category="teleportation" data-config-key="TPA_TIMEOUT_TICKS Copy"><td class="cmd">TPA_TIMEOUT_TICKS<button aria-label="Copy TPA_TIMEOUT_TICKS" class="copy-btn" data-copy-value="TPA_TIMEOUT_TICKS" type="button">Copy</button></td><td class="desc"><code>1200</code></td><td class="desc">TPA request expiry (1200 = 60 s).</td></tr>
+<tr data-command-id="rtp-max-range" data-command-system="config" data-config-category="teleportation" data-config-key="RTP_MAX_RANGE Copy"><td class="cmd">RTP_MAX_RANGE<button aria-label="Copy RTP_MAX_RANGE" class="copy-btn" data-copy-value="RTP_MAX_RANGE" type="button">Copy</button></td><td class="desc"><code>10000</code></td><td class="desc">Max XZ distance for random teleport.</td></tr>
+<tr data-command-id="rtp-min-range" data-command-system="config" data-config-category="teleportation" data-config-key="RTP_MIN_RANGE Copy"><td class="cmd">RTP_MIN_RANGE<button aria-label="Copy RTP_MIN_RANGE" class="copy-btn" data-copy-value="RTP_MIN_RANGE" type="button">Copy</button></td><td class="desc"><code>500</code></td><td class="desc">Min XZ distance from 0,0 for RTP.</td></tr>
+<tr data-command-id="rtp-cooldown-seconds" data-command-system="config" data-config-category="teleportation" data-config-key="RTP_COOLDOWN_SECONDS Copy"><td class="cmd">RTP_COOLDOWN_SECONDS<button aria-label="Copy RTP_COOLDOWN_SECONDS" class="copy-btn" data-copy-value="RTP_COOLDOWN_SECONDS" type="button">Copy</button></td><td class="desc"><code>300</code></td><td class="desc">Cooldown between RTP uses (seconds).</td></tr>
+<tr data-command-id="max-transfer-amount" data-command-system="config" data-config-category="economy" data-config-key="MAX_TRANSFER_AMOUNT Copy"><td class="cmd">MAX_TRANSFER_AMOUNT<button aria-label="Copy MAX_TRANSFER_AMOUNT" class="copy-btn" data-copy-value="MAX_TRANSFER_AMOUNT" type="button">Copy</button></td><td class="desc"><code>1,000,000,000</code></td><td class="desc">Max single payment amount.</td></tr>
+<tr data-command-id="max-mute-days" data-command-system="config" data-config-category="moderation_admin" data-config-key="MAX_MUTE_DAYS Copy"><td class="cmd">MAX_MUTE_DAYS<button aria-label="Copy MAX_MUTE_DAYS" class="copy-btn" data-copy-value="MAX_MUTE_DAYS" type="button">Copy</button></td><td class="desc"><code>365</code></td><td class="desc">Maximum mute duration in days.</td></tr>
+<tr data-command-id="shop-page-size" data-command-system="config" data-config-category="economy" data-config-key="SHOP_PAGE_SIZE Copy"><td class="cmd">SHOP_PAGE_SIZE<button aria-label="Copy SHOP_PAGE_SIZE" class="copy-btn" data-copy-value="SHOP_PAGE_SIZE" type="button">Copy</button></td><td class="desc"><code>27</code></td><td class="desc">Items per shop page.</td></tr>
+<tr data-command-id="team-name-min-length" data-command-system="config" data-config-category="claims_teams" data-config-key="TEAM_NAME_MIN_LENGTH Copy"><td class="cmd">TEAM_NAME_MIN_LENGTH<button aria-label="Copy TEAM_NAME_MIN_LENGTH" class="copy-btn" data-copy-value="TEAM_NAME_MIN_LENGTH" type="button">Copy</button></td><td class="desc"><code>3</code></td><td class="desc">Minimum faction name length.</td></tr>
+<tr data-command-id="team-name-max-length" data-command-system="config" data-config-category="claims_teams" data-config-key="TEAM_NAME_MAX_LENGTH Copy"><td class="cmd">TEAM_NAME_MAX_LENGTH<button aria-label="Copy TEAM_NAME_MAX_LENGTH" class="copy-btn" data-copy-value="TEAM_NAME_MAX_LENGTH" type="button">Copy</button></td><td class="desc"><code>20</code></td><td class="desc">Maximum faction name length.</td></tr>
+</tbody>
+</table></div>
+</section>
+</main>
+</div>
+<button aria-label="Back to top" class="scroll-top" type="button">↑</button><script id="elitefaction-docs-data" type="application/json">{
+  "meta": {
+    "title": "EliteFaction Modern Operator Wiki & AI-Ready Command Reference",
+    "version": "1.2.0",
+    "lastUpdated": "2026-05-02",
+    "namespace": "/f:",
+    "docModelVersion": "1.1.0",
+    "machineReadableBlockId": "elitefaction-docs-data",
+    "localeCount": 16
+  },
+  "pack": {
+    "behaviorPack": {
+      "name": "EliteFaction BP",
+      "description": "EliteFaction Behavior Pack",
+      "version": [
+        1,
+        2,
+        0
+      ],
+      "minEngineVersion": [
+        1,
+        26,
+        0
+      ],
+      "entry": "scripts/main.js"
+    },
+    "resourcePack": {
+      "name": "EliteFaction RP",
+      "description": "EliteFaction Resource Pack",
+      "version": [
+        1,
+        2,
+        0
+      ],
+      "minEngineVersion": [
+        1,
+        26,
+        0
+      ]
+    },
+    "scriptDependencies": [
+      {
+        "module_name": "@minecraft/server",
+        "version": "2.7.0-beta"
+      },
+      {
+        "module_name": "@minecraft/server-ui",
+        "version": "2.1.0-beta"
+      }
+    ],
+    "customItems": [
+      {
+        "identifier": "elitefaction:menu_tome",
+        "name": "EliteFactions Menu"
+      },
+      {
+        "identifier": "elitefaction:faction_relic_blade",
+        "name": "Faction Relic Blade"
+      }
+    ]
+  },
+  "installation": {
+    "requiresBehaviorPack": true,
+    "requiresResourcePack": true,
+    "steps": [
+      "Import the .mcaddon package into Minecraft Bedrock.",
+      "Enable both EliteFaction BP and EliteFaction RP on the same world.",
+      "Use the /f: slash namespace for runtime commands.",
+      "Tune BP/scripts/config.js before production rollout."
+    ]
+  },
+  "featureFlags": [
+    {
+      "key": "foundation",
+      "label": "Foundation",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "phase1_core",
+      "label": "Phase1 Core",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "phase2_missions",
+      "label": "Phase2 Missions",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "phase3_warraid",
+      "label": "Phase3 Warraid",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "phase4_admin",
+      "label": "Phase4 Admin",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "claim_map_v1",
+      "label": "Claim Map",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "faction_warps_v1",
+      "label": "Faction Warps",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "rank_templates_v1",
+      "label": "Rank Templates",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "home_territory_buffs_v1",
+      "label": "Home Territory Buffs",
+      "enabled": true,
+      "description": "Core or rollout-ready in the shipped config."
+    },
+    {
+      "key": "claim_matrix_v1",
+      "label": "Claim Matrix",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "raid_breach_rules_v1",
+      "label": "Raid Breach Rules",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "siege_objective_v1",
+      "label": "Siege Objective",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "claim_border_fx_v1",
+      "label": "Claim Border Fx",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "actionbar_toasts_v1",
+      "label": "Actionbar Toasts",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "claim_upkeep_v1",
+      "label": "Claim Upkeep",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "dynamic_buy_pricing_v1",
+      "label": "Dynamic Buy Pricing",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "diplomacy_penalties_v1",
+      "label": "Diplomacy Penalties",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "pvp_antifarm_v1",
+      "label": "Pvp Antifarm",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "combat_tag_v1",
+      "label": "Combat Tag",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "newbie_protection_v1",
+      "label": "Newbie Protection",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "faction_dashboard_v1",
+      "label": "Faction Dashboard",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "role_management_ui_v1",
+      "label": "Role Management Ui",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "faction_audit_v1",
+      "label": "Faction Audit",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "claim_rollback_v1",
+      "label": "Claim Rollback",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    },
+    {
+      "key": "war_spectate_v1",
+      "label": "War Spectate",
+      "enabled": false,
+      "description": "Present in the shipped config but disabled by default."
+    }
+  ],
+  "customContent": {
+    "items": [
+      {
+        "identifier": "elitefaction:menu_tome",
+        "displayName": "EliteFactions Menu",
+        "category": "items"
+      },
+      {
+        "identifier": "elitefaction:faction_relic_blade",
+        "displayName": "Faction Relic Blade",
+        "category": "equipment"
+      }
+    ],
+    "uiFiles": [
+      "_global_variables.json",
+      "_ui_defs.json",
+      "animated_bar.json",
+      "chest_inventory_system.json",
+      "chest_server_form.json",
+      "furnace_server_form.json",
+      "hud_screen.json",
+      "server_form.json"
+    ],
+    "textureEntries": [
+      "elitefactions_menu",
+      "faction_relic_blade"
+    ]
+  },
+  "systems": [
+    {
+      "id": "overview",
+      "kind": "overview",
+      "title": "◎ Overview",
+      "summary": "EliteFaction is a Bedrock factions add-on that bundles territory control, economy, diplomacy, war systems, moderation, and operator tooling behind the /f: slash namespace. This revised wiki is organized for players, operators, and server staff who need a clear reference for commands, systems, and deployment.",
+      "commandIds": []
+    },
+    {
+      "id": "pack",
+      "kind": "operator",
+      "title": "⌘ Pack & Runtime",
+      "summary": "The uploaded package contains a behavior pack, a resource pack, beta script modules, custom items, UI files, and localization bundles. These values are taken from the actual manifests and pack contents.",
+      "commandIds": []
+    },
+    {
+      "id": "install",
+      "kind": "operator",
+      "title": "↳ Installation",
+      "summary": "Deploy both packs together. The behavior pack depends on the matching resource pack UUID and the script entrypoint defined in the manifest.",
+      "commandIds": []
+    },
+    {
+      "id": "features",
+      "kind": "operator",
+      "title": "◌ Feature Flags",
+      "summary": "Feature flags in config.js gate staged systems. The core slash build is active, while several advanced systems remain disabled by default.",
+      "commandIds": []
+    },
+    {
+      "id": "content",
+      "kind": "content",
+      "title": "◈ Custom Content",
+      "summary": "The add-on ships more than commands. The package includes custom items, resource textures, server-form UI assets, and text/hologram rendering support that operators may want to reference when extending the pack.",
+      "commandIds": []
+    },
+    {
+      "id": "factions",
+      "kind": "system",
+      "title": "⚑ Factions",
+      "summary": "Players create and join factions to collaborate on land claiming, economy, and combat. Names must be 3–20 characters and match [A-Za-z0-9 _-] .",
+      "commandIds": [
+        "f-team-create",
+        "f-team-join",
+        "f-team-accept",
+        "f-team-leave",
+        "f-team-info-faction",
+        "f-team-list",
+        "f-info-faction",
+        "f-set",
+        "f-customize",
+        "f-top",
+        "f-item",
+        "f-help",
+        "f-map-radius",
+        "f-setwarp",
+        "f-warp",
+        "f-delwarp",
+        "f-warps"
+      ]
+    },
+    {
+      "id": "bounties",
+      "kind": "system",
+      "title": "◇ Faction Bounties",
+      "summary": "Faction bounties are funded from the faction vault and are claimed automatically on valid PvP kills.",
+      "commandIds": [
+        "f-bounty-list",
+        "f-bounty-add",
+        "f-bounty-info",
+        "f-bounty-remove"
+      ]
+    },
+    {
+      "id": "claims",
+      "kind": "system",
+      "title": "▣ Claims & Land",
+      "summary": "Factions protect land by purchasing claim blocks and using the golden shovel to select corners of an area. Claimed land prevents outsiders from building or breaking blocks.",
+      "commandIds": [
+        "f-claim-buy",
+        "f-claim-sell",
+        "f-claim-info",
+        "f-claim-list",
+        "f-claim-cancel",
+        "f-claimblocks",
+        "f-claimblocks-buy",
+        "f-claim-trust",
+        "f-untrust",
+        "f-claim-visualize-sec",
+        "f-claim-transfer",
+        "f-claim-landmark"
+      ]
+    },
+    {
+      "id": "power",
+      "kind": "system",
+      "title": "◆ Power & Upgrades",
+      "summary": "Factions earn power points through activity (kills, missions, etc.). Power determines faction level, which unlocks upgrades and increases vault capacity and warp slots.",
+      "commandIds": [
+        "f-power",
+        "f-power-top",
+        "f-upgrade"
+      ]
+    },
+    {
+      "id": "ranks",
+      "kind": "system",
+      "title": "◈ Ranks",
+      "summary": "Custom faction roles with granular permissions. Leaders can create roles, assign permission nodes, and apply pre-built templates.",
+      "commandIds": [
+        "f-rank-list",
+        "f-rank-create",
+        "f-rank-delete",
+        "f-rank-perms",
+        "f-rank-assign",
+        "f-rank-unassign",
+        "f-rank-templates",
+        "f-rank-template"
+      ]
+    },
+    {
+      "id": "diplomacy",
+      "kind": "system",
+      "title": "☍ Diplomacy",
+      "summary": "Factions negotiate alliances and truces. Pacts must be accepted by both parties and can be broken unilaterally (with penalties if diplomacy_penalties_v1 is enabled).",
+      "commandIds": [
+        "f-ally",
+        "f-truce",
+        "f-pact-accept",
+        "f-pact-deny",
+        "f-pact-break"
+      ]
+    },
+    {
+      "id": "war",
+      "kind": "system",
+      "title": "⚔ War & Raids phase3_warraid",
+      "summary": "Declared wars allow factions to raid each other's claimed territory. Raid windows can be restricted by admins to specific times. War has a cooldown and requires mutual agreement (unless declined).",
+      "commandIds": [
+        "f-war-stake",
+        "f-war-accept",
+        "f-war-decline",
+        "f-war-ceasefire",
+        "f-raidstatus",
+        "grace",
+        "window",
+        "offline",
+        "shield",
+        "war"
+      ]
+    },
+    {
+      "id": "missions",
+      "kind": "system",
+      "title": "◉ Missions phase2_missions",
+      "summary": "Missions are tracked objectives that reward factions with power points and money on completion. Enable phase2_missions in config to activate.",
+      "commandIds": [
+        "f-missions",
+        "f-mission-claim"
+      ]
+    },
+    {
+      "id": "economy",
+      "kind": "economy",
+      "title": "$ Currency",
+      "summary": "The server uses a scoreboard-backed currency ( money objective). Players earn money by selling items and completing missions; spend it in the shop and auction house.",
+      "commandIds": [
+        "f-bal",
+        "f-pay",
+        "f-baltop"
+      ]
+    },
+    {
+      "id": "daily",
+      "kind": "economy",
+      "title": "◐ Daily Faction Rewards",
+      "summary": "Daily rewards can be claimed once per player per UTC day, with one faction bonus per faction per UTC day.",
+      "commandIds": [
+        "f-daily",
+        "f-daily-claim"
+      ]
+    },
+    {
+      "id": "shop",
+      "kind": "economy",
+      "title": "⊡ Shop",
+      "summary": "A chest-UI shop with categories, quantity cycling, buy preview, and a sell GUI. Tax from /f:vault tax applies to shop transactions.",
+      "commandIds": [
+        "f-shop",
+        "f-sell",
+        "f-sellall",
+        "f-sellgui"
+      ]
+    },
+    {
+      "id": "auction",
+      "kind": "economy",
+      "title": "⬡ Auction House",
+      "summary": "Players list items for direct purchase. Listings are identified by a numeric ID. Use /f:ah browse to discover active listings.",
+      "commandIds": [
+        "f-ah",
+        "f-ah-sell-amount",
+        "f-ah-buy",
+        "f-ah-cancel"
+      ]
+    },
+    {
+      "id": "vault",
+      "kind": "economy",
+      "title": "▭ Faction Vault",
+      "summary": "A shared faction treasury. Vault capacity scales with faction level/upgrades. A tax rate (0–15%) is deducted from member transactions and deposited automatically.",
+      "commandIds": [
+        "f-vault",
+        "f-vault-deposit",
+        "f-vault-withdraw",
+        "f-vault-tax",
+        "f-vault-ledger-page"
+      ]
+    },
+    {
+      "id": "teleport",
+      "kind": "utility",
+      "title": "↝ Teleportation",
+      "summary": "All teleport commands share a 120-second cooldown and a 5-second warmup (moving cancels it). Combat-tagged players cannot teleport.",
+      "commandIds": [
+        "f-tpa",
+        "f-tpaccept",
+        "f-tpdecline",
+        "f-tpcancel",
+        "f-home-name",
+        "f-spawn"
+      ]
+    },
+    {
+      "id": "chat",
+      "kind": "utility",
+      "title": "☷ Chat",
+      "summary": "Players can toggle between public, faction, and alliance chat channels. Faction and alliance messages are only visible to respective members.",
+      "commandIds": [
+        "f-chat",
+        "f-c",
+        "f-ac"
+      ]
+    },
+    {
+      "id": "moderation",
+      "kind": "utility",
+      "title": "⊛ Moderation",
+      "summary": "Mutes and bans are time-based. Duration format uses days; max mute duration is 365 days . Ban commands require phase4_admin .",
+      "commandIds": [
+        "f-mute",
+        "f-unmute",
+        "f-ban-reason",
+        "f-unban",
+        "f-banlist-page"
+      ]
+    },
+    {
+      "id": "admin",
+      "kind": "operator",
+      "title": "⊕ Admin Commands",
+      "summary": "Requires the admin tag. Grant it with /tag <player> add admin .",
+      "commandIds": [
+        "f-admin-gui",
+        "f-admin-team",
+        "f-admin-audit-page-text",
+        "f-admin-test-run",
+        "f-admin-mapreset-now",
+        "f-admin-raidwindow",
+        "f-admin-hologram-set",
+        "f-admin-faction-set",
+        "f-admin-faction-inspect",
+        "f-notify-page",
+        "f-ac",
+        "f-admin-claim-freeze",
+        "f-admin-claim-snapshots",
+        "f-admin-claim-restore-index",
+        "f-admin-war-zones",
+        "f-admin-war-spectate",
+        "f-admin-war-follow",
+        "f-admin-war-stop"
+      ]
+    },
+    {
+      "id": "help-language",
+      "kind": "utility",
+      "title": "Aa Help GUI & Language UI",
+      "summary": "The Help GUI includes quick actions for bounties, daily rewards, and language selection.",
+      "commandIds": [
+        "f-help-language",
+        "f-lang-code",
+        "help-action-language"
+      ]
+    },
+    {
+      "id": "i18n",
+      "kind": "operator",
+      "title": "◫ Localization",
+      "summary": "EliteFaction ships with 11 built-in locales. Players can switch language with /f:lang <code> ; all UI strings update immediately.",
+      "commandIds": [
+        "en-us",
+        "es-es",
+        "fr-fr",
+        "pt-br",
+        "pt-pt",
+        "ru-ru",
+        "zh-cn",
+        "ar-sa",
+        "hi-in",
+        "bn-bd",
+        "id-id"
+      ]
+    },
+    {
+      "id": "download",
+      "kind": "operator",
+      "title": "↗ Download & Deploy",
+      "summary": "",
+      "commandIds": []
+    },
+    {
+      "id": "config",
+      "kind": "operator",
+      "title": "⚙ Config Reference",
+      "summary": "All tunable values live in BP/scripts/config.js . Edit before loading the world. This wiki documents the slash-command build and verified runtime values from the 1.2.0 package.",
+      "commandIds": [
+        "command-namespace",
+        "admin-tag",
+        "money-objective",
+        "claim-cost-per-block",
+        "claim-sell-rate",
+        "claim-tool",
+        "max-claim-area",
+        "tpa-timeout-ticks",
+        "rtp-max-range",
+        "rtp-min-range",
+        "rtp-cooldown-seconds",
+        "max-transfer-amount",
+        "max-mute-days",
+        "shop-page-size",
+        "team-name-min-length",
+        "team-name-max-length"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "id": "f-team-create",
+      "system": "factions",
+      "command": "/f:team create \"name\"",
+      "aliases": [],
+      "syntax": "/f:team create \"name\"",
+      "description": "Create a new faction. You become the leader.",
+      "permissions": [
+        "leader"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team create NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-team-join",
+      "system": "factions",
+      "command": "/f:team join \"name\"",
+      "aliases": [],
+      "syntax": "/f:team join \"name\"",
+      "description": "Request to join an existing faction.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team join NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-team-accept",
+      "system": "factions",
+      "command": "/f:team accept <player>",
+      "aliases": [],
+      "syntax": "/f:team accept <player>",
+      "description": "Accept a pending join request (leader/captain).",
+      "permissions": [
+        "leader-or-captain"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team accept Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-team-leave",
+      "system": "factions",
+      "command": "/f:team leave",
+      "aliases": [],
+      "syntax": "/f:team leave",
+      "description": "Leave your current faction.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team leave"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-team-info-faction",
+      "system": "factions",
+      "command": "/f:team info [\"faction\"]",
+      "aliases": [],
+      "syntax": "/f:team info [\"faction\"]",
+      "description": "Show faction details. Defaults to your own.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team info [\"faction\"]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-team-list",
+      "system": "factions",
+      "command": "/f:team list",
+      "aliases": [],
+      "syntax": "/f:team list",
+      "description": "List all factions.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:team list"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-info-faction",
+      "system": "factions",
+      "command": "/f:info [\"faction\"]",
+      "aliases": [],
+      "syntax": "/f:info [\"faction\"]",
+      "description": "Detailed faction info panel.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:info [\"faction\"]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-set",
+      "system": "factions",
+      "command": "/f:set <field> <value>",
+      "aliases": [],
+      "syntax": "/f:set <field> <value>",
+      "description": "Set a faction field (tag, color, prefix, banner, trail).",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:set tag NF"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-customize",
+      "system": "factions",
+      "command": "/f:customize",
+      "aliases": [],
+      "syntax": "/f:customize",
+      "description": "Open the cosmetics GUI.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:customize"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-top",
+      "system": "factions",
+      "command": "/f:top",
+      "aliases": [],
+      "syntax": "/f:top",
+      "description": "Faction leaderboard.",
+      "permissions": [
+        "leader"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:top"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-item",
+      "system": "factions",
+      "command": "/f:item",
+      "aliases": [],
+      "syntax": "/f:item",
+      "description": "Receive the faction menu item (opens full GUI).",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:item"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-help",
+      "system": "factions",
+      "command": "/f:help",
+      "aliases": [],
+      "syntax": "/f:help",
+      "description": "In-game help browser.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:help"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-map-radius",
+      "system": "factions",
+      "command": "/f:map [radius]",
+      "aliases": [],
+      "syntax": "/f:map [radius]",
+      "description": "ASCII claim map centered on your position.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:map 4"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-setwarp",
+      "system": "factions",
+      "command": "/f:setwarp \"name\"",
+      "aliases": [],
+      "syntax": "/f:setwarp \"name\"",
+      "description": "Set a named faction warp at your position.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:setwarp NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-warp",
+      "system": "factions",
+      "command": "/f:warp \"name\"",
+      "aliases": [],
+      "syntax": "/f:warp \"name\"",
+      "description": "Teleport to a faction warp.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:warp NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-delwarp",
+      "system": "factions",
+      "command": "/f:delwarp \"name\"",
+      "aliases": [],
+      "syntax": "/f:delwarp \"name\"",
+      "description": "Delete a faction warp.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:delwarp NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-warps",
+      "system": "factions",
+      "command": "/f:warps",
+      "aliases": [],
+      "syntax": "/f:warps",
+      "description": "List all faction warps.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:warps"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-buy",
+      "system": "claims",
+      "command": "/f:claim buy",
+      "aliases": [],
+      "syntax": "/f:claim buy",
+      "description": "Confirm purchase of the selected claim area.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim buy"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-sell",
+      "system": "claims",
+      "command": "/f:claim sell",
+      "aliases": [],
+      "syntax": "/f:claim sell",
+      "description": "Release and sell back a claim you are standing in.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim sell"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-info",
+      "system": "claims",
+      "command": "/f:claim info",
+      "aliases": [],
+      "syntax": "/f:claim info",
+      "description": "Show info about the claim you are standing in.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim info"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-list",
+      "system": "claims",
+      "command": "/f:claim list",
+      "aliases": [],
+      "syntax": "/f:claim list",
+      "description": "List all of your faction's claims.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim list"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-cancel",
+      "system": "claims",
+      "command": "/f:claim cancel",
+      "aliases": [],
+      "syntax": "/f:claim cancel",
+      "description": "Cancel an in-progress claim selection.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim cancel"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claimblocks",
+      "system": "claims",
+      "command": "/f:claimblocks",
+      "aliases": [],
+      "syntax": "/f:claimblocks",
+      "description": "Show faction's current claim block balance.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claimblocks"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claimblocks-buy",
+      "system": "claims",
+      "command": "/f:claimblocks buy <n>",
+      "aliases": [],
+      "syntax": "/f:claimblocks buy <n>",
+      "description": "Purchase additional claim blocks.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claimblocks buy <n>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-trust",
+      "system": "claims",
+      "command": "/f:claim trust <player>",
+      "aliases": [],
+      "syntax": "/f:claim trust <player>",
+      "description": "Allow a player to build in your claim.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim trust Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-untrust",
+      "system": "claims",
+      "command": "/f:untrust <player>",
+      "aliases": [],
+      "syntax": "/f:untrust <player>",
+      "description": "Revoke a player's build access.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:untrust Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-visualize-sec",
+      "system": "claims",
+      "command": "/f:claim visualize <particles|blocks> [sec]",
+      "aliases": [],
+      "syntax": "/f:claim visualize <particles|blocks> [sec]",
+      "description": "Show claim borders visually.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim visualize <particles|blocks> [sec]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-transfer",
+      "system": "claims",
+      "command": "/f:claim transfer \"faction\"",
+      "aliases": [],
+      "syntax": "/f:claim transfer \"faction\"",
+      "description": "Transfer a claim to another faction (e.g., war prize).",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim transfer Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-claim-landmark",
+      "system": "claims",
+      "command": "/f:claim landmark <set|list|remove>",
+      "aliases": [],
+      "syntax": "/f:claim landmark <set|list|remove>",
+      "description": "Manage named landmark points within claims.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:claim landmark <set|list|remove>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-power",
+      "system": "power",
+      "command": "/f:power",
+      "aliases": [],
+      "syntax": "/f:power",
+      "description": "Show your faction's current power and level.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:power"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-power-top",
+      "system": "power",
+      "command": "/f:power top",
+      "aliases": [],
+      "syntax": "/f:power top",
+      "description": "Leaderboard of top factions by power.",
+      "permissions": [
+        "leader"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:power top"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-upgrade",
+      "system": "power",
+      "command": "/f:upgrade <upgradeId>",
+      "aliases": [],
+      "syntax": "/f:upgrade <upgradeId>",
+      "description": "Purchase a faction upgrade using power points.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:upgrade vault_capacity"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-list",
+      "system": "ranks",
+      "command": "/f:rank list",
+      "aliases": [],
+      "syntax": "/f:rank list",
+      "description": "List all faction ranks and their permissions.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank list"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-create",
+      "system": "ranks",
+      "command": "/f:rank create \"name\"",
+      "aliases": [],
+      "syntax": "/f:rank create \"name\"",
+      "description": "Create a new rank.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank create NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-delete",
+      "system": "ranks",
+      "command": "/f:rank delete \"name\"",
+      "aliases": [],
+      "syntax": "/f:rank delete \"name\"",
+      "description": "Delete a rank.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank delete NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-perms",
+      "system": "ranks",
+      "command": "/f:rank perms \"rank\" <add|remove|show> <perm>",
+      "aliases": [],
+      "syntax": "/f:rank perms \"rank\" <add|remove|show> <perm>",
+      "description": "Manage permissions for a rank.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank perms Captain <add|remove|show> claim.trust"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-assign",
+      "system": "ranks",
+      "command": "/f:rank assign <player> \"rank\"",
+      "aliases": [],
+      "syntax": "/f:rank assign <player> \"rank\"",
+      "description": "Assign a rank to a faction member.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank assign Steve Captain"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-unassign",
+      "system": "ranks",
+      "command": "/f:rank unassign <player>",
+      "aliases": [],
+      "syntax": "/f:rank unassign <player>",
+      "description": "Remove a player's rank assignment.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank unassign Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-templates",
+      "system": "ranks",
+      "command": "/f:rank templates",
+      "aliases": [],
+      "syntax": "/f:rank templates",
+      "description": "List available rank templates.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank templates"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-rank-template",
+      "system": "ranks",
+      "command": "/f:rank template \"rank\" \"templateName\"",
+      "aliases": [],
+      "syntax": "/f:rank template \"rank\" \"templateName\"",
+      "description": "Apply a template's permissions to a rank.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:rank template Captain \"templateName\""
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ally",
+      "system": "diplomacy",
+      "command": "/f:ally \"faction\"",
+      "aliases": [],
+      "syntax": "/f:ally \"faction\"",
+      "description": "Propose an alliance with another faction.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ally Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-truce",
+      "system": "diplomacy",
+      "command": "/f:truce \"faction\"",
+      "aliases": [],
+      "syntax": "/f:truce \"faction\"",
+      "description": "Propose a truce.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:truce Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-pact-accept",
+      "system": "diplomacy",
+      "command": "/f:pact accept \"faction\"",
+      "aliases": [],
+      "syntax": "/f:pact accept \"faction\"",
+      "description": "Accept a pending pact proposal.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:pact accept Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-pact-deny",
+      "system": "diplomacy",
+      "command": "/f:pact deny \"faction\"",
+      "aliases": [],
+      "syntax": "/f:pact deny \"faction\"",
+      "description": "Reject a pact proposal.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:pact deny Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-pact-break",
+      "system": "diplomacy",
+      "command": "/f:pact break \"faction\"",
+      "aliases": [],
+      "syntax": "/f:pact break \"faction\"",
+      "description": "Unilaterally end an active pact.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:pact break Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-war-stake",
+      "system": "war",
+      "command": "/f:war \"faction\" [stake]",
+      "aliases": [],
+      "syntax": "/f:war \"faction\" [stake]",
+      "description": "Declare war. Optional resource stake requires phase3.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:war Rivals [stake]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-war-accept",
+      "system": "war",
+      "command": "/f:war accept \"faction\"",
+      "aliases": [],
+      "syntax": "/f:war accept \"faction\"",
+      "description": "Accept an incoming war declaration.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:war accept Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-war-decline",
+      "system": "war",
+      "command": "/f:war decline \"faction\"",
+      "aliases": [],
+      "syntax": "/f:war decline \"faction\"",
+      "description": "Decline a war declaration.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:war decline Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-war-ceasefire",
+      "system": "war",
+      "command": "/f:war ceasefire \"faction\"",
+      "aliases": [],
+      "syntax": "/f:war ceasefire \"faction\"",
+      "description": "Propose a ceasefire during active war. phase3",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:war ceasefire Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-raidstatus",
+      "system": "war",
+      "command": "/f:raidstatus",
+      "aliases": [],
+      "syntax": "/f:raidstatus",
+      "description": "Check whether raiding is currently permitted and why.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:raidstatus"
+      ],
+      "related": []
+    },
+    {
+      "id": "grace",
+      "system": "war",
+      "command": "grace",
+      "aliases": [],
+      "syntax": "grace",
+      "description": "Map reset grace period is active.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "grace"
+      ],
+      "related": []
+    },
+    {
+      "id": "window",
+      "system": "war",
+      "command": "window",
+      "aliases": [],
+      "syntax": "window",
+      "description": "Outside the admin-configured raid window.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "window"
+      ],
+      "related": []
+    },
+    {
+      "id": "offline",
+      "system": "war",
+      "command": "offline",
+      "aliases": [],
+      "syntax": "offline",
+      "description": "Defender offline protection is active.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "offline"
+      ],
+      "related": []
+    },
+    {
+      "id": "shield",
+      "system": "war",
+      "command": "shield",
+      "aliases": [],
+      "syntax": "shield",
+      "description": "Defender has an active raid shield.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "shield"
+      ],
+      "related": []
+    },
+    {
+      "id": "war",
+      "system": "war",
+      "command": "war",
+      "aliases": [],
+      "syntax": "war",
+      "description": "No active war exists between the factions.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "war"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-missions",
+      "system": "missions",
+      "command": "/f:missions",
+      "aliases": [],
+      "syntax": "/f:missions",
+      "description": "List available missions and progress.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:missions"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-mission-claim",
+      "system": "missions",
+      "command": "/f:mission claim <missionId>",
+      "aliases": [],
+      "syntax": "/f:mission claim <missionId>",
+      "description": "Claim the reward for a completed mission.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:mission claim daily_miner"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-bal",
+      "system": "economy",
+      "command": "/f:bal",
+      "aliases": [
+        "/f:balance"
+      ],
+      "syntax": "/f:bal",
+      "description": "Check your current balance.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:bal"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-pay",
+      "system": "economy",
+      "command": "/f:pay <player> <amount>",
+      "aliases": [],
+      "syntax": "/f:pay <player> <amount>",
+      "description": "Transfer money to another player. Max: $1,000,000,000.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:pay Steve 100"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-baltop",
+      "system": "economy",
+      "command": "/f:baltop",
+      "aliases": [],
+      "syntax": "/f:baltop",
+      "description": "Richest players leaderboard.",
+      "permissions": [
+        "leader"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:baltop"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-shop",
+      "system": "shop",
+      "command": "/f:shop",
+      "aliases": [],
+      "syntax": "/f:shop",
+      "description": "Open the shop browser GUI.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:shop"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-sell",
+      "system": "shop",
+      "command": "/f:sell",
+      "aliases": [],
+      "syntax": "/f:sell",
+      "description": "Sell the item currently held in your hand.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:sell"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-sellall",
+      "system": "shop",
+      "command": "/f:sellall",
+      "aliases": [],
+      "syntax": "/f:sellall",
+      "description": "Sell all sellable items in your inventory at once.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:sellall"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-sellgui",
+      "system": "shop",
+      "command": "/f:sellgui",
+      "aliases": [],
+      "syntax": "/f:sellgui",
+      "description": "Open the sell GUI to select items to sell.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:sellgui"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ah",
+      "system": "auction",
+      "command": "/f:ah",
+      "aliases": [
+        "/f:ah browse"
+      ],
+      "syntax": "/f:ah",
+      "description": "Browse active auction listings.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ah"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ah-sell-amount",
+      "system": "auction",
+      "command": "/f:ah sell <price> [amount]",
+      "aliases": [],
+      "syntax": "/f:ah sell <price> [amount]",
+      "description": "List held item(s) for sale at the given price.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ah sell <price> [amount]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ah-buy",
+      "system": "auction",
+      "command": "/f:ah buy <listingId>",
+      "aliases": [],
+      "syntax": "/f:ah buy <listingId>",
+      "description": "Purchase a specific listing by ID.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ah buy 12"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ah-cancel",
+      "system": "auction",
+      "command": "/f:ah cancel <listingId>",
+      "aliases": [],
+      "syntax": "/f:ah cancel <listingId>",
+      "description": "Cancel and reclaim your own listing.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ah cancel 12"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-vault",
+      "system": "vault",
+      "command": "/f:vault",
+      "aliases": [],
+      "syntax": "/f:vault",
+      "description": "View vault balance and capacity.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:vault"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-vault-deposit",
+      "system": "vault",
+      "command": "/f:vault deposit <amount>",
+      "aliases": [],
+      "syntax": "/f:vault deposit <amount>",
+      "description": "Deposit money into the faction vault.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:vault deposit 100"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-vault-withdraw",
+      "system": "vault",
+      "command": "/f:vault withdraw <amount>",
+      "aliases": [],
+      "syntax": "/f:vault withdraw <amount>",
+      "description": "Withdraw money from the vault (leader/captain).",
+      "permissions": [
+        "leader-or-captain"
+      ],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:vault withdraw 100"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-vault-tax",
+      "system": "vault",
+      "command": "/f:vault tax <0-15>",
+      "aliases": [],
+      "syntax": "/f:vault tax <0-15>",
+      "description": "Set the faction tax rate (% deducted from pay & shop).",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:vault tax 10"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-vault-ledger-page",
+      "system": "vault",
+      "command": "/f:vault ledger [page]",
+      "aliases": [],
+      "syntax": "/f:vault ledger [page]",
+      "description": "View transaction history.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:vault ledger 1"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-tpa",
+      "system": "teleport",
+      "command": "/f:tpa <player>",
+      "aliases": [],
+      "syntax": "/f:tpa <player>",
+      "description": "Send a teleport request to a player. Expires after 60 seconds.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:tpa Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-tpaccept",
+      "system": "teleport",
+      "command": "/f:tpaccept",
+      "aliases": [],
+      "syntax": "/f:tpaccept",
+      "description": "Accept an incoming TPA request.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": "120 seconds shared teleport cooldown; /f:spawn and /f:rtp use 300 second RTP cooldown",
+      "warmup": "5 seconds; movement cancels",
+      "examples": [
+        "/f:tpaccept"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-tpdecline",
+      "system": "teleport",
+      "command": "/f:tpdecline",
+      "aliases": [],
+      "syntax": "/f:tpdecline",
+      "description": "Decline an incoming TPA request.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": "120 seconds shared teleport cooldown; /f:spawn and /f:rtp use 300 second RTP cooldown",
+      "warmup": "5 seconds; movement cancels",
+      "examples": [
+        "/f:tpdecline"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-tpcancel",
+      "system": "teleport",
+      "command": "/f:tpcancel",
+      "aliases": [],
+      "syntax": "/f:tpcancel",
+      "description": "Cancel your own pending TPA request.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": "120 seconds shared teleport cooldown; /f:spawn and /f:rtp use 300 second RTP cooldown",
+      "warmup": "5 seconds; movement cancels",
+      "examples": [
+        "/f:tpcancel"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-home-name",
+      "system": "teleport",
+      "command": "/f:home [\"name\"]",
+      "aliases": [],
+      "syntax": "/f:home [\"name\"]",
+      "description": "Teleport to your personal home or a faction warp named home .",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": "120 seconds shared teleport cooldown; /f:spawn and /f:rtp use 300 second RTP cooldown",
+      "warmup": "5 seconds; movement cancels",
+      "examples": [
+        "/f:home [\"name\"]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-spawn",
+      "system": "teleport",
+      "command": "/f:spawn",
+      "aliases": [
+        "/f:rtp"
+      ],
+      "syntax": "/f:spawn",
+      "description": "Random teleport (500–10,000 blocks from origin). 5-minute cooldown.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:spawn"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-chat",
+      "system": "chat",
+      "command": "/f:chat <team|alliance|public|toggle>",
+      "aliases": [],
+      "syntax": "/f:chat <team|alliance|public|toggle>",
+      "description": "Switch or toggle your active chat channel.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:chat <team|alliance|public|toggle>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-c",
+      "system": "chat",
+      "command": "/f:c \"message\"",
+      "aliases": [],
+      "syntax": "/f:c \"message\"",
+      "description": "Send a single message to faction chat without switching channels.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:c \"message\""
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ac",
+      "system": "chat",
+      "command": "/f:ac \"message\"",
+      "aliases": [],
+      "syntax": "/f:ac \"message\"",
+      "description": "Send to alliance chat. phase4_admin",
+      "permissions": [
+        "admin-tag",
+        "feature:phase4_admin"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": "phase4_admin",
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ac \"message\""
+      ],
+      "related": []
+    },
+    {
+      "id": "f-mute",
+      "system": "moderation",
+      "command": "/f:mute <player> <duration>",
+      "aliases": [],
+      "syntax": "/f:mute <player> <duration>",
+      "description": "Mute a player for the given duration.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:mute Steve 2d"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-unmute",
+      "system": "moderation",
+      "command": "/f:unmute <player>",
+      "aliases": [],
+      "syntax": "/f:unmute <player>",
+      "description": "Remove a mute.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:unmute Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ban-reason",
+      "system": "moderation",
+      "command": "/f:ban <player> <duration> [\"reason\"]",
+      "aliases": [],
+      "syntax": "/f:ban <player> <duration> [\"reason\"]",
+      "description": "Ban a player.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ban Steve 2d griefing"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-unban",
+      "system": "moderation",
+      "command": "/f:unban <player>",
+      "aliases": [],
+      "syntax": "/f:unban <player>",
+      "description": "Unban a player.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:unban Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-banlist-page",
+      "system": "moderation",
+      "command": "/f:banlist [page]",
+      "aliases": [],
+      "syntax": "/f:banlist [page]",
+      "description": "View the active ban list.",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:banlist 1"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-gui",
+      "system": "admin",
+      "command": "/f:admin gui",
+      "aliases": [],
+      "syntax": "/f:admin gui",
+      "description": "Open the admin control panel GUI.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin gui"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-team",
+      "system": "admin",
+      "command": "/f:admin team",
+      "aliases": [],
+      "syntax": "/f:admin team",
+      "description": "Admin faction management panel.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin team"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-audit-page-text",
+      "system": "admin",
+      "command": "/f:admin audit [page|text <page>]",
+      "aliases": [],
+      "syntax": "/f:admin audit [page|text <page>]",
+      "description": "View the action audit log.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin audit [page|text <page>]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-test-run",
+      "system": "admin",
+      "command": "/f:admin test run <suite>",
+      "aliases": [],
+      "syntax": "/f:admin test run <suite>",
+      "description": "Run a smoke test. Suites: smoke , economy , warraid , claims , moderation .",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin test run <suite>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-mapreset-now",
+      "system": "admin",
+      "command": "/f:admin mapreset now",
+      "aliases": [],
+      "syntax": "/f:admin mapreset now",
+      "description": "Trigger an immediate map reset.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin mapreset now"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-raidwindow",
+      "system": "admin",
+      "command": "/f:admin raidwindow <set|list|clear>",
+      "aliases": [],
+      "syntax": "/f:admin raidwindow <set|list|clear>",
+      "description": "Configure allowed raid windows.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin raidwindow <set|list|clear>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-hologram-set",
+      "system": "admin",
+      "command": "/f:admin hologram set <id>",
+      "aliases": [],
+      "syntax": "/f:admin hologram set <id>",
+      "description": "Place a hologram anchor at your position.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin hologram set spawn-board"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-faction-set",
+      "system": "admin",
+      "command": "/f:admin faction set ...",
+      "aliases": [],
+      "syntax": "/f:admin faction set ...",
+      "description": "Force-set a faction property.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin faction set ..."
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-faction-inspect",
+      "system": "admin",
+      "command": "/f:admin faction inspect \"name\"",
+      "aliases": [],
+      "syntax": "/f:admin faction inspect \"name\"",
+      "description": "Deep inspect faction data.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin faction inspect NightRaid"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-notify-page",
+      "system": "admin",
+      "command": "/f:notify [page]",
+      "aliases": [],
+      "syntax": "/f:notify [page]",
+      "description": "View admin notifications.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:notify 1"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-ac",
+      "system": "admin",
+      "command": "/f:ac \"msg\"",
+      "aliases": [],
+      "syntax": "/f:ac \"msg\"",
+      "description": "Broadcast to all alliance channels.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:ac \"msg\""
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-claim-freeze",
+      "system": "admin",
+      "command": "/f:admin claim freeze <on|off|status>",
+      "aliases": [],
+      "syntax": "/f:admin claim freeze <on|off|status>",
+      "description": "Globally freeze or inspect claim editing for administrative intervention.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin claim freeze <on|off|status>"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-claim-snapshots",
+      "system": "admin",
+      "command": "/f:admin claim snapshots",
+      "aliases": [],
+      "syntax": "/f:admin claim snapshots",
+      "description": "List saved claim snapshots for rollback workflows.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin claim snapshots"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-claim-restore-index",
+      "system": "admin",
+      "command": "/f:admin claim restore [index]",
+      "aliases": [],
+      "syntax": "/f:admin claim restore [index]",
+      "description": "Restore a captured claim snapshot by index.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin claim restore [index]"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-war-zones",
+      "system": "admin",
+      "command": "/f:admin war zones",
+      "aliases": [],
+      "syntax": "/f:admin war zones",
+      "description": "Show current war-zone state and active war telemetry.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin war zones"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-war-spectate",
+      "system": "admin",
+      "command": "/f:admin war spectate \"faction\"",
+      "aliases": [],
+      "syntax": "/f:admin war spectate \"faction\"",
+      "description": "Enter war spectate mode for a faction conflict.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin war spectate Rivals"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-war-follow",
+      "system": "admin",
+      "command": "/f:admin war follow <player>",
+      "aliases": [],
+      "syntax": "/f:admin war follow <player>",
+      "description": "Follow a player during an active war session.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin war follow Steve"
+      ],
+      "related": []
+    },
+    {
+      "id": "f-admin-war-stop",
+      "system": "admin",
+      "command": "/f:admin war stop",
+      "aliases": [],
+      "syntax": "/f:admin war stop",
+      "description": "Force-stop the current war spectate/follow workflow.",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "/f:admin war stop"
+      ],
+      "related": []
+    },
+    {
+      "id": "en-us",
+      "system": "i18n",
+      "command": "en_us",
+      "aliases": [],
+      "syntax": "en_us",
+      "description": "English (US) — default",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "en_us"
+      ],
+      "related": []
+    },
+    {
+      "id": "es-es",
+      "system": "i18n",
+      "command": "es_es",
+      "aliases": [],
+      "syntax": "es_es",
+      "description": "Spanish",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "es_es"
+      ],
+      "related": []
+    },
+    {
+      "id": "fr-fr",
+      "system": "i18n",
+      "command": "fr_fr",
+      "aliases": [],
+      "syntax": "fr_fr",
+      "description": "French",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "fr_fr"
+      ],
+      "related": []
+    },
+    {
+      "id": "pt-br",
+      "system": "i18n",
+      "command": "pt_br",
+      "aliases": [],
+      "syntax": "pt_br",
+      "description": "Portuguese (Brazil)",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "pt_br"
+      ],
+      "related": []
+    },
+    {
+      "id": "pt-pt",
+      "system": "i18n",
+      "command": "pt_pt",
+      "aliases": [],
+      "syntax": "pt_pt",
+      "description": "Portuguese (Portugal)",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "pt_pt"
+      ],
+      "related": []
+    },
+    {
+      "id": "ru-ru",
+      "system": "i18n",
+      "command": "ru_ru",
+      "aliases": [],
+      "syntax": "ru_ru",
+      "description": "Russian",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "ru_ru"
+      ],
+      "related": []
+    },
+    {
+      "id": "zh-cn",
+      "system": "i18n",
+      "command": "zh_cn",
+      "aliases": [],
+      "syntax": "zh_cn",
+      "description": "Chinese (Simplified)",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "zh_cn"
+      ],
+      "related": []
+    },
+    {
+      "id": "ar-sa",
+      "system": "i18n",
+      "command": "ar_sa",
+      "aliases": [],
+      "syntax": "ar_sa",
+      "description": "Arabic",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "ar_sa"
+      ],
+      "related": []
+    },
+    {
+      "id": "hi-in",
+      "system": "i18n",
+      "command": "hi_in",
+      "aliases": [],
+      "syntax": "hi_in",
+      "description": "Hindi",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "hi_in"
+      ],
+      "related": []
+    },
+    {
+      "id": "bn-bd",
+      "system": "i18n",
+      "command": "bn_bd",
+      "aliases": [],
+      "syntax": "bn_bd",
+      "description": "Bengali",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "bn_bd"
+      ],
+      "related": []
+    },
+    {
+      "id": "id-id",
+      "system": "i18n",
+      "command": "id_id",
+      "aliases": [],
+      "syntax": "id_id",
+      "description": "Indonesian",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "id_id"
+      ],
+      "related": []
+    },
+    {
+      "id": "command-namespace",
+      "system": "config",
+      "command": "COMMAND_NAMESPACE",
+      "aliases": [],
+      "syntax": "COMMAND_NAMESPACE",
+      "description": "/f:",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "COMMAND_NAMESPACE"
+      ],
+      "related": []
+    },
+    {
+      "id": "admin-tag",
+      "system": "config",
+      "command": "ADMIN_TAG",
+      "aliases": [],
+      "syntax": "ADMIN_TAG",
+      "description": "admin",
+      "permissions": [
+        "admin-tag"
+      ],
+      "requiresAdminTag": true,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "ADMIN_TAG"
+      ],
+      "related": []
+    },
+    {
+      "id": "money-objective",
+      "system": "config",
+      "command": "MONEY_OBJECTIVE",
+      "aliases": [],
+      "syntax": "MONEY_OBJECTIVE",
+      "description": "money",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "MONEY_OBJECTIVE"
+      ],
+      "related": []
+    },
+    {
+      "id": "claim-cost-per-block",
+      "system": "config",
+      "command": "CLAIM_COST_PER_BLOCK",
+      "aliases": [],
+      "syntax": "CLAIM_COST_PER_BLOCK",
+      "description": "5",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "CLAIM_COST_PER_BLOCK"
+      ],
+      "related": []
+    },
+    {
+      "id": "claim-sell-rate",
+      "system": "config",
+      "command": "CLAIM_SELL_RATE",
+      "aliases": [],
+      "syntax": "CLAIM_SELL_RATE",
+      "description": "3",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "CLAIM_SELL_RATE"
+      ],
+      "related": []
+    },
+    {
+      "id": "claim-tool",
+      "system": "config",
+      "command": "CLAIM_TOOL",
+      "aliases": [],
+      "syntax": "CLAIM_TOOL",
+      "description": "golden_shovel",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "CLAIM_TOOL"
+      ],
+      "related": []
+    },
+    {
+      "id": "max-claim-area",
+      "system": "config",
+      "command": "MAX_CLAIM_AREA",
+      "aliases": [],
+      "syntax": "MAX_CLAIM_AREA",
+      "description": "10000",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "MAX_CLAIM_AREA"
+      ],
+      "related": []
+    },
+    {
+      "id": "tpa-timeout-ticks",
+      "system": "config",
+      "command": "TPA_TIMEOUT_TICKS",
+      "aliases": [],
+      "syntax": "TPA_TIMEOUT_TICKS",
+      "description": "1200",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "TPA_TIMEOUT_TICKS"
+      ],
+      "related": []
+    },
+    {
+      "id": "rtp-max-range",
+      "system": "config",
+      "command": "RTP_MAX_RANGE",
+      "aliases": [],
+      "syntax": "RTP_MAX_RANGE",
+      "description": "10000",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "RTP_MAX_RANGE"
+      ],
+      "related": []
+    },
+    {
+      "id": "rtp-min-range",
+      "system": "config",
+      "command": "RTP_MIN_RANGE",
+      "aliases": [],
+      "syntax": "RTP_MIN_RANGE",
+      "description": "500",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "RTP_MIN_RANGE"
+      ],
+      "related": []
+    },
+    {
+      "id": "rtp-cooldown-seconds",
+      "system": "config",
+      "command": "RTP_COOLDOWN_SECONDS",
+      "aliases": [],
+      "syntax": "RTP_COOLDOWN_SECONDS",
+      "description": "300",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "RTP_COOLDOWN_SECONDS"
+      ],
+      "related": []
+    },
+    {
+      "id": "max-transfer-amount",
+      "system": "config",
+      "command": "MAX_TRANSFER_AMOUNT",
+      "aliases": [],
+      "syntax": "MAX_TRANSFER_AMOUNT",
+      "description": "1,000,000,000",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "MAX_TRANSFER_AMOUNT"
+      ],
+      "related": []
+    },
+    {
+      "id": "max-mute-days",
+      "system": "config",
+      "command": "MAX_MUTE_DAYS",
+      "aliases": [],
+      "syntax": "MAX_MUTE_DAYS",
+      "description": "365",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "MAX_MUTE_DAYS"
+      ],
+      "related": []
+    },
+    {
+      "id": "shop-page-size",
+      "system": "config",
+      "command": "SHOP_PAGE_SIZE",
+      "aliases": [],
+      "syntax": "SHOP_PAGE_SIZE",
+      "description": "27",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "SHOP_PAGE_SIZE"
+      ],
+      "related": []
+    },
+    {
+      "id": "team-name-min-length",
+      "system": "config",
+      "command": "TEAM_NAME_MIN_LENGTH",
+      "aliases": [],
+      "syntax": "TEAM_NAME_MIN_LENGTH",
+      "description": "3",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "TEAM_NAME_MIN_LENGTH"
+      ],
+      "related": []
+    },
+    {
+      "id": "team-name-max-length",
+      "system": "config",
+      "command": "TEAM_NAME_MAX_LENGTH",
+      "aliases": [],
+      "syntax": "TEAM_NAME_MAX_LENGTH",
+      "description": "20",
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "examples": [
+        "TEAM_NAME_MAX_LENGTH"
+      ],
+      "related": []
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-bounty-list",
+      "system": "bounties",
+      "command": "/f:bounty list",
+      "syntax": "/f:bounty list",
+      "description": "Show active faction bounties.",
+      "examples": [
+        "/f:bounty list"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-bounty-add",
+      "system": "bounties",
+      "command": "/f:bounty add <player> <amount>",
+      "syntax": "/f:bounty add <player> <amount>",
+      "description": "Place a bounty on a player using money from the faction vault.",
+      "examples": [
+        "/f:bounty add Steve 5000"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-bounty-info",
+      "system": "bounties",
+      "command": "/f:bounty info <player>",
+      "syntax": "/f:bounty info <player>",
+      "description": "Check bounty details for a specific player.",
+      "examples": [
+        "/f:bounty info Steve"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-bounty-remove",
+      "system": "bounties",
+      "command": "/f:bounty remove <player>",
+      "syntax": "/f:bounty remove <player>",
+      "description": "Remove an active bounty.",
+      "examples": [
+        "/f:bounty remove Steve"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-daily",
+      "system": "daily",
+      "command": "/f:daily",
+      "syntax": "/f:daily",
+      "description": "View daily reward status.",
+      "examples": [
+        "/f:daily"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-daily-claim",
+      "system": "daily",
+      "command": "/f:daily claim",
+      "syntax": "/f:daily claim",
+      "description": "Claim today's personal reward and faction bonus when available.",
+      "examples": [
+        "/f:daily claim"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-help-language",
+      "system": "help-language",
+      "command": "/f:help",
+      "syntax": "/f:help",
+      "description": "Open the Help GUI with new quick actions.",
+      "examples": [
+        "/f:help"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "f-lang-code",
+      "system": "help-language",
+      "command": "/f:lang <code>",
+      "syntax": "/f:lang <code>",
+      "description": "Switch the player locale by language code.",
+      "examples": [
+        "/f:lang nl_nl"
+      ]
+    },
+    {
+      "aliases": [],
+      "permissions": [],
+      "requiresAdminTag": false,
+      "featureFlag": null,
+      "cooldown": null,
+      "warmup": null,
+      "related": [],
+      "id": "help-action-language",
+      "system": "help-language",
+      "command": "Help → Language Selection",
+      "syntax": "Help → Language Selection",
+      "description": "Open the language picker from the Help GUI.",
+      "examples": [
+        "Help → Language Selection"
+      ]
+    }
+  ],
+  "config": [
+    {
+      "key": "COMMAND_NAMESPACE Copy",
+      "default": "/f:",
+      "type": "string",
+      "description": "Slash command namespace used by the add-on.",
+      "category": "core"
+    },
+    {
+      "key": "ADMIN_TAG Copy",
+      "default": "admin",
+      "type": "string",
+      "description": "Tag that grants admin access.",
+      "category": "moderation_admin"
+    },
+    {
+      "key": "MONEY_OBJECTIVE Copy",
+      "default": "money",
+      "type": "string",
+      "description": "Scoreboard objective for currency.",
+      "category": "economy"
+    },
+    {
+      "key": "CLAIM_COST_PER_BLOCK Copy",
+      "default": "5",
+      "type": "number",
+      "description": "Cost in $ to claim one block of area.",
+      "category": "claims_teams"
+    },
+    {
+      "key": "CLAIM_SELL_RATE Copy",
+      "default": "3",
+      "type": "number",
+      "description": "$ returned per block when selling a claim.",
+      "category": "claims_teams"
+    },
+    {
+      "key": "CLAIM_TOOL Copy",
+      "default": "golden_shovel",
+      "type": "string",
+      "description": "Item used to select claim corners.",
+      "category": "claims_teams"
+    },
+    {
+      "key": "MAX_CLAIM_AREA Copy",
+      "default": "10000",
+      "type": "number",
+      "description": "Maximum XZ area per single claim.",
+      "category": "general"
+    },
+    {
+      "key": "TPA_TIMEOUT_TICKS Copy",
+      "default": "1200",
+      "type": "number",
+      "description": "TPA request expiry (1200 = 60 s).",
+      "category": "teleportation"
+    },
+    {
+      "key": "RTP_MAX_RANGE Copy",
+      "default": "10000",
+      "type": "number",
+      "description": "Max XZ distance for random teleport.",
+      "category": "teleportation"
+    },
+    {
+      "key": "RTP_MIN_RANGE Copy",
+      "default": "500",
+      "type": "number",
+      "description": "Min XZ distance from 0,0 for RTP.",
+      "category": "teleportation"
+    },
+    {
+      "key": "RTP_COOLDOWN_SECONDS Copy",
+      "default": "300",
+      "type": "number",
+      "description": "Cooldown between RTP uses (seconds).",
+      "category": "teleportation"
+    },
+    {
+      "key": "MAX_TRANSFER_AMOUNT Copy",
+      "default": "1,000,000,000",
+      "type": "number",
+      "description": "Max single payment amount.",
+      "category": "economy"
+    },
+    {
+      "key": "MAX_MUTE_DAYS Copy",
+      "default": "365",
+      "type": "number",
+      "description": "Maximum mute duration in days.",
+      "category": "moderation_admin"
+    },
+    {
+      "key": "SHOP_PAGE_SIZE Copy",
+      "default": "27",
+      "type": "number",
+      "description": "Items per shop page.",
+      "category": "economy"
+    },
+    {
+      "key": "TEAM_NAME_MIN_LENGTH Copy",
+      "default": "3",
+      "type": "number",
+      "description": "Minimum faction name length.",
+      "category": "claims_teams"
+    },
+    {
+      "key": "TEAM_NAME_MAX_LENGTH Copy",
+      "default": "20",
+      "type": "number",
+      "description": "Maximum faction name length.",
+      "category": "claims_teams"
+    }
+  ],
+  "locales": [
+    {
+      "code": "en_us",
+      "language": "English (US) — default"
+    },
+    {
+      "code": "es_es",
+      "language": "Spanish"
+    },
+    {
+      "code": "fr_fr",
+      "language": "French"
+    },
+    {
+      "code": "pt_br",
+      "language": "Portuguese (Brazil)"
+    },
+    {
+      "code": "pt_pt",
+      "language": "Portuguese (Portugal)"
+    },
+    {
+      "code": "ru_ru",
+      "language": "Russian"
+    },
+    {
+      "code": "zh_cn",
+      "language": "Chinese (Simplified)"
+    },
+    {
+      "code": "ar_sa",
+      "language": "Arabic"
+    },
+    {
+      "code": "hi_in",
+      "language": "Hindi"
+    },
+    {
+      "code": "bn_bd",
+      "language": "Bengali"
+    },
+    {
+      "code": "id_id",
+      "language": "Indonesian"
+    },
+    {
+      "code": "nl_nl",
+      "language": "Dutch"
+    },
+    {
+      "code": "sv_se",
+      "language": "Swedish"
+    },
+    {
+      "code": "uk_ua",
+      "language": "Ukrainian"
+    },
+    {
+      "code": "vi_vn",
+      "language": "Vietnamese"
+    },
+    {
+      "code": "th_th",
+      "language": "Thai"
+    }
+  ],
+  "links": [
+    {
+      "label": "Download",
+      "href": "https://www.curseforge.com/minecraft-bedrock/addons/elitefaction"
+    }
+  ]
+}</script><script>
+(() => {
+  const body = document.body;
+  const menuButton = document.querySelector('.menu-toggle');
+  const closeButton = document.querySelector('.close-nav');
+  const overlay = document.querySelector('.mobile-overlay');
+  const navLinks = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+  const sections = Array.from(document.querySelectorAll('main section[id]'));
+  const progressBar = document.querySelector('.progress-bar');
+  const scrollTop = document.querySelector('.scroll-top');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.cmd-table').forEach((table) => {
+    const headers = Array.from(table.querySelectorAll('thead th')).map((th) => th.textContent.trim());
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      row.querySelectorAll('td').forEach((cell, index) => {
+        if (!cell.hasAttribute('data-label')) {
+          cell.setAttribute('data-label', headers[index] || 'Value');
+        }
+      });
+    });
+  });
+
+  const toggleNav = (open) => {
+    const shouldOpen = typeof open === 'boolean' ? open : !body.classList.contains('nav-open');
+    body.classList.toggle('nav-open', shouldOpen);
+    menuButton?.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+  };
+
+  menuButton?.addEventListener('click', () => toggleNav(true));
+  closeButton?.addEventListener('click', () => toggleNav(false));
+  overlay?.addEventListener('click', () => toggleNav(false));
+  navLinks.forEach((link) => link.addEventListener('click', () => toggleNav(false)));
+  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') toggleNav(false); });
+
+  const setActiveLink = (id) => {
+    navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          setActiveLink(entry.target.id);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '-8% 0px -50% 0px' });
+
+    document.querySelectorAll('section.reveal').forEach((section) => {
+      if (prefersReducedMotion) section.classList.add('visible');
+      observer.observe(section);
+    });
+  } else {
+    document.querySelectorAll('section.reveal').forEach((section) => section.classList.add('visible'));
+  }
+
+  const updateScrollUI = () => {
+    const top = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (top / docHeight) * 100 : 0;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+    scrollTop?.classList.toggle('visible', top > 480);
+
+    let currentId = sections[0]?.id;
+    sections.forEach((section) => {
+      const sectionTop = section.getBoundingClientRect().top;
+      if (sectionTop <= 180) currentId = section.id;
+    });
+    if (currentId) setActiveLink(currentId);
+  };
+
+  window.addEventListener('scroll', updateScrollUI, { passive: true });
+  window.addEventListener('resize', updateScrollUI);
+  updateScrollUI();
+
+  scrollTop?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  });
+})();
+
+
+document.querySelectorAll('.copy-btn').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const value = button.getAttribute('data-copy-value') || '';
+    try {
+      await navigator.clipboard.writeText(value);
+      const previous = button.textContent;
+      button.textContent = 'Copied';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = previous;
+        button.classList.remove('copied');
+      }, 1200);
+    } catch (err) {
+      button.textContent = 'Failed';
+      setTimeout(() => { button.textContent = 'Copy'; }, 1200);
+    }
+  });
+});
+</script></body>
+</html>
